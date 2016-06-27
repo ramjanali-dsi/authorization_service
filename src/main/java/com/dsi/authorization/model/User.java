@@ -52,4 +52,7 @@ public class User {
     private String modifiedBy;
 
     private int version;
+
+    @Transient
+    private UserRole userRole;
 }

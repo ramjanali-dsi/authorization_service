@@ -55,8 +55,8 @@ public class Utility {
         } catch (Exception e){
             errorContext = new ErrorContext(str, null, e.getMessage());
         }
-        ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHENTICATE_SERVICE_0008,
-                Constants.AUTHENTICATE_SERVICE_0008_DESCRIPTION, errorContext);
+        ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0008,
+                Constants.AUTHORIZATION_SERVICE_0008_DESCRIPTION, errorContext);
         throw new CustomException(errorMessage);
     }
 
