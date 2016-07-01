@@ -1,4 +1,4 @@
-create table dsi_api (api_id varchar(40) not null, is_active bit, url varchar(255), version integer not null, system_id varchar(40) not null, primary key (api_id));
+create table dsi_api (api_id varchar(40) not null, is_active bit, url varchar(255), method varchar(20), version integer not null, system_id varchar(40) not null, primary key (api_id));
 
 create table dsi_default_api (default_api_id varchar(40) not null, allow_type varchar(20), version integer not null, api_id varchar(40) not null, primary key (default_api_id));
 
@@ -15,3 +15,5 @@ create table dsi_system (system_id varchar(40) not null, is_active bit, name var
 create table dsi_user (user_id varchar(40) not null, created_by varchar(40) not null, created_date datetime, email varchar(40) not null, first_name varchar(40), gender varchar(10), last_name varchar(40), modified_by varchar(40) not null, modified_date datetime, phone varchar(20), tenant_id varchar(40) not null, version integer not null, primary key (user_id));
 
 create table dsi_user_role (user_role_id varchar(40) not null, created_by varchar(40) not null, created_date datetime, is_active bit, modified_by varchar(40) not null, modified_date datetime, version integer not null, role_id varchar(40) not null, system_id varchar(40) not null, user_id varchar(40) not null, primary key (user_role_id));
+
+
