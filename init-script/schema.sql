@@ -16,4 +16,7 @@ create table dsi_user (user_id varchar(40) not null, created_by varchar(40) not 
 
 create table dsi_user_role (user_role_id varchar(40) not null, created_by varchar(40) not null, created_date datetime, is_active bit, modified_by varchar(40) not null, modified_date datetime, version integer not null, role_id varchar(40) not null, system_id varchar(40) not null, user_id varchar(40) not null, primary key (user_role_id));
 
+create table dsi_user_session (user_session_id varchar(40) not null, access_token text, created_by varchar(40) not null,
+created_date datetime, modified_by varchar(40) not null, modified_date datetime, user_id varchar(40) not null, version integer not null, primary key (user_session_id));
+
 

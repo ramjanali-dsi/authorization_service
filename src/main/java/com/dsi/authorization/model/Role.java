@@ -11,7 +11,6 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "dsi_role")
-@Data
 public class Role {
 
     @Id
@@ -27,4 +26,36 @@ public class Role {
     private boolean isActive;
 
     private int version;
+
+    public String getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(String roleId) {
+        this.roleId = roleId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
 }

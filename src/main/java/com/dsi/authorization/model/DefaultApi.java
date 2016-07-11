@@ -11,7 +11,6 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "dsi_default_api")
-@Data
 public class DefaultApi {
 
     @Id
@@ -28,4 +27,36 @@ public class DefaultApi {
     private String allowType;
 
     private int version;
+
+    public String getDefaultApiId() {
+        return defaultApiId;
+    }
+
+    public void setDefaultApiId(String defaultApiId) {
+        this.defaultApiId = defaultApiId;
+    }
+
+    public Api getApi() {
+        return api;
+    }
+
+    public void setApi(Api api) {
+        this.api = api;
+    }
+
+    public String getAllowType() {
+        return allowType;
+    }
+
+    public void setAllowType(String allowType) {
+        this.allowType = allowType;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
 }

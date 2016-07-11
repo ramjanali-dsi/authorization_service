@@ -1,39 +1,29 @@
 package com.dsi.authorization.model;
 
-import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Date;
 
 /**
- * Created by sabbir on 6/24/16.
+ * Created by sabbir on 6/9/16.
  */
 
 @Entity
-@Table(name = "dsi_user_role")
-public class UserRole {
+@Table(name = "dsi_user_session")
+public class UserSession {
 
     @Id
     @GeneratedValue(generator = "system-uuid")
     @GenericGenerator(name = "system-uuid", strategy = "uuid2")
-    @Column(name = "user_role_id", length = 40)
-    private String userRoleId;
+    @Column(name = "user_session_id", length = 40)
+    private String userSessionId;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(name = "user_id", nullable = false, length = 40)
+    private String userId;
 
-    @ManyToOne
-    @JoinColumn(name = "role_id", nullable = false)
-    private Role role;
-
-    @ManyToOne
-    @JoinColumn(name = "system_id", nullable = false)
-    private System system;
-
-    @Column(name = "is_active")
-    private boolean isActive;
+    @Column(name = "access_token", columnDefinition = "TEXT")
+    private String accessToken;
 
     @Column(name = "created_date")
     private Date createdDate;
@@ -49,44 +39,28 @@ public class UserRole {
 
     private int version;
 
-    public String getUserRoleId() {
-        return userRoleId;
+    public String getUserSessionId() {
+        return userSessionId;
     }
 
-    public void setUserRoleId(String userRoleId) {
-        this.userRoleId = userRoleId;
+    public void setUserSessionId(String userSessionId) {
+        this.userSessionId = userSessionId;
     }
 
-    public User getUser() {
-        return user;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public Role getRole() {
-        return role;
+    public String getAccessToken() {
+        return accessToken;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public System getSystem() {
-        return system;
-    }
-
-    public void setSystem(System system) {
-        this.system = system;
-    }
-
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public void setActive(boolean active) {
-        isActive = active;
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
     }
 
     public Date getCreatedDate() {
