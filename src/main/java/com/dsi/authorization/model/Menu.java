@@ -22,6 +22,8 @@ public class Menu {
     @Column(length = 50)
     private String name;
 
+    private int position;
+
     @Column(columnDefinition = "TEXT")
     private String description;
 
@@ -79,5 +81,13 @@ public class Menu {
 
     public void setVersion(int version) {
         this.version = version;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 }

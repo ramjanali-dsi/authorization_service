@@ -2,7 +2,7 @@ create table dsi_api (api_id varchar(40) not null, is_active bit, url varchar(25
 
 create table dsi_default_api (default_api_id varchar(40) not null, allow_type varchar(20), version integer not null, api_id varchar(40) not null, primary key (default_api_id));
 
-create table dsi_menu (menu_id varchar(40) not null, description TEXT, is_active bit, name varchar(50), parent_menu_id varchar(40), version integer not null, primary key (menu_id));
+create table dsi_menu (menu_id varchar(40) not null, description TEXT, is_active bit, name varchar(50), parent_menu_id varchar(40), position integer, version integer not null, primary key (menu_id));
 
 create table dsi_menu_api (menu_api_id varchar(40) not null, is_active bit, version integer not null, api_id varchar(40) not null, menu_id varchar(40) not null, system_id varchar(40) not null, primary key (menu_api_id));
 
