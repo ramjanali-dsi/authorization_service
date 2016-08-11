@@ -18,5 +18,5 @@ public interface MenuService {
 
     List<Menu> getAllSubMenus(String menuID) throws CustomException;
 
-    List<Menu> getAllMenus() throws CustomException;
+    List<Menu> getAllMenus(String userID) throws CustomException;
 }

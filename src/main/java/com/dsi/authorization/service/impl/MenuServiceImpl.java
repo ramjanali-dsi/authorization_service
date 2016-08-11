@@ -88,8 +88,8 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public List<Menu> getAllMenus() throws CustomException {
-        List<Menu> menuList = menuDao.getAllMenus();
+    public List<Menu> getAllMenus(String userID) throws CustomException {
+        List<Menu> menuList = menuDao.getAllMenus(userID);
         if(menuList == null){
             ErrorContext errorContext = new ErrorContext(null, "Menu", "Menu list not found.");
             ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0005,

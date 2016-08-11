@@ -80,12 +80,15 @@ public class MenuDaoImpl extends BaseDao implements MenuDao {
     }
 
     @Override
-    public List<Menu> getAllMenus() {
+    public List<Menu> getAllMenus(String userID) {
         Session session = null;
         List<Menu> menuList = null;
         try {
             session = getSession();
-            Query query = session.createQuery("FROM Menu m WHERE m.parentMenuId is null ORDER BY m.position ASC");
+            Query query = session.createQuery("FROM Menu m WHERE m.parentMenuId is null AND m.menuId in " +
+                    "(SELECT rm.menu.menuId FROM RoleMenu rm WHERE rm.role.roleId in " +
+                    "(SELECT ur.role.roleId FROM UserRole ur WHERE ur.user.userId =:userID)) ORDER BY m.position ASC");
+            query.setParameter("userID", userID);
 
             menuList = query.list();
 

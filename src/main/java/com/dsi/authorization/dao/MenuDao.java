@@ -20,5 +20,5 @@ public interface MenuDao {
 
     List<Menu> getAllSubMenus(String menuID);
 
-    List<Menu> getAllMenus();
+    List<Menu> getAllMenus(String userID);
 }

@@ -11,10 +11,12 @@ import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 import org.apache.log4j.Logger;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
@@ -34,6 +36,9 @@ public class MenuResource {
 
     private static final MenuService menuService = new MenuServiceImpl();
 
+    @Context
+    HttpServletRequest request;
+
     @GET
     @ApiOperation(value = "Read All Menus", notes = "Read All Menus", position = 4)
     @ApiResponses(value = {
@@ -41,7 +46,10 @@ public class MenuResource {
             @ApiResponse(code = 500, message = "Read menus failed, unauthorized.")
     })
     public Response getAllMenus() throws CustomException {
-        List<Menu> menuList = menuService.getAllMenus();
+        String userID = request.getAttribute("user_id") != null ?
+                request.getAttribute("user_id").toString() : null;
+
+        List<Menu> menuList = menuService.getAllMenus(userID);
         logger.info("Menu list size: " + menuList.size());
 
         for(Menu menu : menuList){
