@@ -16,5 +16,7 @@ public interface MenuService {
 
     void deleteMenu(Menu menu) throws CustomException;
 
+    List<Menu> getAllSubMenus(String menuID) throws CustomException;
+
     List<Menu> getAllMenus() throws CustomException;
 }

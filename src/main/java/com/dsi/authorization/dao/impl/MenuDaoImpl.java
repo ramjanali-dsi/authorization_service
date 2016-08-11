@@ -59,12 +59,33 @@ public class MenuDaoImpl extends BaseDao implements MenuDao {
     }
 
     @Override
+    public List<Menu> getAllSubMenus(String menuID) {
+        Session session = null;
+        List<Menu> menuList = null;
+        try {
+            session = getSession();
+            Query query = session.createQuery("FROM Menu m WHERE m.parentMenuId =:menuID ORDER BY m.position ASC");
+            query.setParameter("menuID", menuID);
+
+            menuList = query.list();
+
+        } catch (Exception e) {
+            logger.error("Database error occurs when get: " + e.getMessage());
+        } finally {
+            if(session != null) {
+                close(session);
+            }
+        }
+        return menuList;
+    }
+
+    @Override
     public List<Menu> getAllMenus() {
         Session session = null;
         List<Menu> menuList = null;
         try {
             session = getSession();
-            Query query = session.createQuery("FROM Menu m ORDER BY m.position ASC");
+            Query query = session.createQuery("FROM Menu m WHERE m.parentMenuId is null ORDER BY m.position ASC");
 
             menuList = query.list();
 

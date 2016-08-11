@@ -4,6 +4,8 @@ import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by sabbir on 6/24/16.
@@ -34,6 +36,9 @@ public class Menu {
     private boolean isActive;
 
     private int version;
+
+    @Transient
+    private List<Menu> subMenuList = new ArrayList<>();
 
     public String getMenuId() {
         return menuId;
@@ -89,5 +94,13 @@ public class Menu {
 
     public void setPosition(int position) {
         this.position = position;
+    }
+
+    public List<Menu> getSubMenuList() {
+        return subMenuList;
+    }
+
+    public void setSubMenuList(List<Menu> subMenuList) {
+        this.subMenuList = subMenuList;
     }
 }

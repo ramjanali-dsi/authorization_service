@@ -18,5 +18,7 @@ public interface MenuDao {
 
     Menu getMenuByIdOrName(String menuID, String name);
 
+    List<Menu> getAllSubMenus(String menuID);
+
     List<Menu> getAllMenus();
 }

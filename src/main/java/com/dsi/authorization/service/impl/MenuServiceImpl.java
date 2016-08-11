@@ -76,6 +76,18 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
+    public List<Menu> getAllSubMenus(String menuID) throws CustomException {
+        List<Menu> subMenuList = menuDao.getAllSubMenus(menuID);
+        if(subMenuList == null){
+            ErrorContext errorContext = new ErrorContext(null, "Menu", "Menu list not found.");
+            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0005,
+                    Constants.AUTHORIZATION_SERVICE_0005_DESCRIPTION, errorContext);
+            throw new CustomException(errorMessage);
+        }
+        return subMenuList;
+    }
+
+    @Override
     public List<Menu> getAllMenus() throws CustomException {
         List<Menu> menuList = menuDao.getAllMenus();
         if(menuList == null){

@@ -4,6 +4,7 @@ import com.dsi.authorization.exception.CustomException;
 import com.dsi.authorization.model.Menu;
 import com.dsi.authorization.service.MenuService;
 import com.dsi.authorization.service.impl.MenuServiceImpl;
+import com.dsi.authorization.util.Utility;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;
@@ -16,6 +17,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -41,6 +43,13 @@ public class MenuResource {
     public Response getAllMenus() throws CustomException {
         List<Menu> menuList = menuService.getAllMenus();
         logger.info("Menu list size: " + menuList.size());
+
+        for(Menu menu : menuList){
+            List<Menu> subMenu = menuService.getAllSubMenus(menu.getMenuId());
+            if(!Utility.isNullOrEmpty(subMenu)){
+                menu.setSubMenuList(subMenu);
+            }
+        }
 
         return Response.ok().entity(menuList).build();
     }
