@@ -18,11 +18,10 @@ INSERT INTO `service_authorization`.`dsi_api` (`api_id`, `is_active`, `url`, `me
 
 INSERT INTO `service_authorization`.`dsi_api` (`api_id`, `is_active`, `url`, `method`, `version`, `system_id`) VALUES ('3349ac71-c9de-4638-bcdf-285743809f23', b'1', 'v1/password/change', 'POST', '1', '425744ba-6c10-47c0-91cf-5a4c05265b56');
 
-
------------------------------------ Authorized API List --------------------------------------
-
 INSERT INTO `service_authorization`.`dsi_api` (`api_id`, `is_active`, `url`, `method`, `version`, `system_id`) VALUES ('f58a9fe2-b4fa-4ff0-b81a-fe10edb08031', b'1', 'v1/role', 'GET', '1', '425744ba-6c10-47c0-91cf-5a4c05265b56');
 
+
+----------------------------------- Authorized API List --------------------------------------
 
 INSERT INTO `service_authorization`.`dsi_default_api` (`default_api_id`, `allow_type`, `version`, `api_id`) VALUES ('b3127bfa-f581-4f3a-a0c9-10c621ca49a3', 'Public', '1', '5ad26e94-f02b-45a0-8f01-5a78b59c8fff');
 
