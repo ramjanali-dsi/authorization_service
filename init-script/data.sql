@@ -20,6 +20,16 @@ INSERT INTO `service_authorization`.`dsi_api` (`api_id`, `is_active`, `url`, `me
 
 INSERT INTO `service_authorization`.`dsi_api` (`api_id`, `is_active`, `url`, `method`, `version`, `system_id`) VALUES ('f58a9fe2-b4fa-4ff0-b81a-fe10edb08031', b'1', 'v1/role', 'GET', '1', '425744ba-6c10-47c0-91cf-5a4c05265b56');
 
+INSERT INTO `service_authorization`.`dsi_api` (`api_id`, `is_active`, `url`, `method`, `version`, `system_id`) VALUES ('d70b697c-33f1-4109-b5ab-e5ea1640f064', b'1', 'v1/menu', 'GET', '1', '425744ba-6c10-47c0-91cf-5a4c05265b56');
+
+INSERT INTO `service_authorization`.`dsi_api` (`api_id`, `is_active`, `url`, `method`, `version`, `system_id`) VALUES ('9f138829-690d-4567-a18c-c3714aa597e2', b'1', 'v1/user_session', 'POST', '1', '425744ba-6c10-47c0-91cf-5a4c05265b56');
+
+INSERT INTO `service_authorization`.`dsi_api` (`api_id`, `is_active`, `url`, `method`, `version`, `system_id`) VALUES ('0a1bb3a9-67a0-4c89-af88-e575edc602bf', b'1', 'v1/user_session', 'PUT', '1', '425744ba-6c10-47c0-91cf-5a4c05265b56');
+
+INSERT INTO `service_authorization`.`dsi_api` (`api_id`, `is_active`, `url`, `method`, `version`, `system_id`) VALUES ('81d0c3d2-0b76-449e-992e-61167120ad0c', b'1', 'v1/user_session', 'DELETE', '1', '425744ba-6c10-47c0-91cf-5a4c05265b56');
+
+INSERT INTO `service_authorization`.`dsi_api` (`api_id`, `is_active`, `url`, `method`, `version`, `system_id`) VALUES ('87528562-327b-481e-9827-095edaa1f32c', b'1', 'v1/user_session/is_valid', 'POST', '1', '425744ba-6c10-47c0-91cf-5a4c05265b56');
+
 
 ----------------------------------- Authorized API List --------------------------------------
 
@@ -29,5 +39,22 @@ INSERT INTO `service_authorization`.`dsi_default_api` (`default_api_id`, `allow_
 
 INSERT INTO `service_authorization`.`dsi_default_api` (`default_api_id`, `allow_type`, `version`, `api_id`) VALUES ('0bc7a08c-e892-4bb1-b781-f634fc211c48', 'Public', '1', 'c79e0ddf-abf5-431f-8478-7bed057b2d9b');
 
-INSERT INTO `service_authorization`.`dsi_default_api` (`default_api_id`, `allow_type`, `version`, `api_id`) VALUES ('7a56c6ab-a9fb-466b-87ca-b5fa06948d46', 'Public', '1', '98fc604a-9cc8-4bd8-8435-395288470bfa');
+INSERT INTO `service_authorization`.`dsi_default_api` (`default_api_id`, `allow_type`, `version`, `api_id`) VALUES ('ac02dcb2-fbf1-4ea3-afea-a4e24405f844', 'System', '1', 'f58a9fe2-b4fa-4ff0-b81a-fe10edb08031');
+
+INSERT INTO `service_authorization`.`dsi_default_api` (`default_api_id`, `allow_type`, `version`, `api_id`) VALUES ('9b9324ab-37e0-47c2-9c3e-ba07016a1eee', 'System', '1', '9f138829-690d-4567-a18c-c3714aa597e2');
+
+INSERT INTO `service_authorization`.`dsi_default_api` (`default_api_id`, `allow_type`, `version`, `api_id`) VALUES ('7dfbaacd-ce0a-44fe-aa4a-9088edfc0507', 'Authenticated', '1', '4f0c3adc-a5cb-4a82-aaa8-d630dff0abae');
+
+INSERT INTO `service_authorization`.`dsi_default_api` (`default_api_id`, `allow_type`, `version`, `api_id`) VALUES ('44f167ca-8747-4e77-94c2-ffbcee87ad74', 'System', '1', '87528562-327b-481e-9827-095edaa1f32c');
+
+INSERT INTO `service_authorization`.`dsi_default_api` (`default_api_id`, `allow_type`, `version`, `api_id`) VALUES ('4cd6c7cf-a4d7-4799-b69a-fbe7c0ec2ce0', 'Authenticated', '1', '6d752110-f01f-4958-a46b-6842ebba5b62');
+
+INSERT INTO `service_authorization`.`dsi_default_api` (`default_api_id`, `allow_type`, `version`, `api_id`) VALUES ('ffcbf122-0244-4138-a26a-985c83aad786', 'System', '1', '0a1bb3a9-67a0-4c89-af88-e575edc602bf');
+
+INSERT INTO `service_authorization`.`dsi_default_api` (`default_api_id`, `allow_type`, `version`, `api_id`) VALUES ('a846a1fb-becd-4b02-8e81-946234f454e5', 'System', '1', '81d0c3d2-0b76-449e-992e-61167120ad0c');
+
+INSERT INTO `service_authorization`.`dsi_default_api` (`default_api_id`, `allow_type`, `version`, `api_id`) VALUES ('64da36cd-4bb7-42cd-89be-1001e52b1088', 'Authenticated', '1', 'c79e0ddf-abf5-431f-8478-7bed057b2d9b');
+
+INSERT INTO `service_authorization`.`dsi_default_api` (`default_api_id`, `allow_type`, `version`, `api_id`) VALUES ('d4583f3b-00c7-4d97-8e42-aebbd6437ce8', 'Authenticated', '1', 'd70b697c-33f1-4109-b5ab-e5ea1640f064');
+
 

@@ -144,6 +144,12 @@
             <version>1.4.7</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.dsi.checkauthorization</groupId>
+            <artifactId>check-authorization</artifactId>
+            <version>1.0</version>
+        </dependency>
+
     </dependencies>
 
 </project>

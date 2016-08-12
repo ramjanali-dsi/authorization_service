@@ -19,7 +19,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -54,9 +53,8 @@ public class MenuResource {
 
         for(Menu menu : menuList){
             List<Menu> subMenu = menuService.getAllSubMenus(menu.getMenuId());
-            if(!Utility.isNullOrEmpty(subMenu)){
-                menu.setSubMenuList(subMenu);
-            }
+            logger.info("Submenu list size of " + menu.getName() + ": " + subMenu.size());
+            menu.setSubMenuList(subMenu);
         }
 
         return Response.ok().entity(menuList).build();
