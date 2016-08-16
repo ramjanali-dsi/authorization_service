@@ -11,12 +11,8 @@ import java.util.List;
 public interface MenuService {
 
     void saveMenu(Menu menu) throws CustomException;
-
     void updateMenu(Menu menu) throws CustomException;
-
     void deleteMenu(Menu menu) throws CustomException;
-
     List<Menu> getAllSubMenus(String menuID) throws CustomException;
-
     List<Menu> getAllMenus(String userID) throws CustomException;
 }

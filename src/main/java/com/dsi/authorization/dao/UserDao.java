@@ -1,5 +1,6 @@
 package com.dsi.authorization.dao;
 
+import com.dsi.authorization.model.System;
 import com.dsi.authorization.model.User;
 
 /**
@@ -8,12 +9,9 @@ import com.dsi.authorization.model.User;
 public interface UserDao {
 
     boolean saveUser(User user);
-
     boolean updateUser(User user);
-
     boolean deleteUser(User user);
-
     User getUserByID(String userID);
-
     User getUserByEmail(String email);
+    System getSystemByUserID(String userID);
 }

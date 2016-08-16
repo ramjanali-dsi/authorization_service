@@ -1,6 +1,7 @@
 package com.dsi.authorization.service;
 
 import com.dsi.authorization.exception.CustomException;
+import com.dsi.authorization.model.System;
 import com.dsi.authorization.model.User;
 
 /**
@@ -9,10 +10,8 @@ import com.dsi.authorization.model.User;
 public interface UserService {
 
     void saveUser(User user) throws CustomException;
-
     void updateUser(User user) throws CustomException;
-
     void deleteUser(User user) throws CustomException;
-
     User getUserByID(String userID) throws CustomException;
+    System getSystemByUserID(String userID) throws CustomException;
 }

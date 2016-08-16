@@ -10,14 +10,9 @@ import java.util.List;
 public interface RoleDao {
 
     boolean saveRole(Role role);
-
     boolean updateRole(Role role);
-
     boolean deleteRole(Role role);
-
     Role getRoleByID(String roleID);
-
     Role getRoleByName(String roleName);
-
     List<Role> getAllRoles();
 }

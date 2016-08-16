@@ -1,6 +1,7 @@
 package com.dsi.authorization.dao.impl;
 
 import com.dsi.authorization.dao.UserDao;
+import com.dsi.authorization.model.System;
 import com.dsi.authorization.model.User;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
@@ -68,5 +69,27 @@ public class UserDaoImpl extends BaseDao implements UserDao {
             }
         }
         return user;
+    }
+
+    @Override
+    public System getSystemByUserID(String userID) {
+        Session session = null;
+        System system = null;
+        try {
+            session = getSession();
+            Query query = session.createQuery("FROM System s WHERE s.tenantId in " +
+                    "(SELECT u.tenantId FROM User u WHERE u.userId =:userID)");
+            query.setParameter("userID", userID);
+
+            system = (System) query.uniqueResult();
+
+        } catch (Exception e) {
+            logger.error("Database error occurs when get: " + e.getMessage());
+        } finally {
+            if(session != null) {
+                close(session);
+            }
+        }
+        return system;
     }
 }

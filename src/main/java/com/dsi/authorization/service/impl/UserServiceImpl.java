@@ -5,6 +5,7 @@ import com.dsi.authorization.dao.impl.UserDaoImpl;
 import com.dsi.authorization.exception.CustomException;
 import com.dsi.authorization.exception.ErrorContext;
 import com.dsi.authorization.exception.ErrorMessage;
+import com.dsi.authorization.model.System;
 import com.dsi.authorization.model.User;
 import com.dsi.authorization.service.UserService;
 import com.dsi.authorization.util.Constants;
@@ -21,14 +22,6 @@ public class UserServiceImpl implements UserService {
     public void saveUser(User user) throws CustomException {
         validateInputForCreation(user);
 
-        User isUserExist = userDao.getUserByEmail(user.getEmail());
-        if(isUserExist != null){
-            ErrorContext errorContext = new ErrorContext(null, "User", "User already exist.");
-            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0002,
-                    Constants.AUTHORIZATION_SERVICE_0002_DESCRIPTION, errorContext);
-            throw new CustomException(errorMessage);
-        }
-
         user.setCreatedDate(Utility.today());
         user.setModifiedDate(Utility.today());
         boolean res = userDao.saveUser(user);
@@ -42,10 +35,16 @@ public class UserServiceImpl implements UserService {
 
     private void validateInputForCreation(User user) throws CustomException {
         if(user.getTenantId() == null){
-            ErrorContext errorContext = new ErrorContext("TenantID", "User",
-                    "TenantID not defined.");
+            ErrorContext errorContext = new ErrorContext(null, "User", "TenantID not defined.");
             ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0001,
                     Constants.AUTHORIZATION_SERVICE_0001_DESCRIPTION, errorContext);
+            throw new CustomException(errorMessage);
+        }
+
+        if(userDao.getUserByEmail(user.getEmail()) != null){
+            ErrorContext errorContext = new ErrorContext(null, "User", "User already exist.");
+            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0002,
+                    Constants.AUTHORIZATION_SERVICE_0002_DESCRIPTION, errorContext);
             throw new CustomException(errorMessage);
         }
     }
@@ -85,5 +84,17 @@ public class UserServiceImpl implements UserService {
             throw new CustomException(errorMessage);
         }
         return user;
+    }
+
+    @Override
+    public System getSystemByUserID(String userID) throws CustomException {
+        System system = userDao.getSystemByUserID(userID);
+        if (system == null) {
+            ErrorContext errorContext = new ErrorContext(userID, "System", "System not found by userID: " + userID);
+            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0005,
+                    Constants.AUTHORIZATION_SERVICE_0005_DESCRIPTION, errorContext);
+            throw new CustomException(errorMessage);
+        }
+        return system;
     }
 }

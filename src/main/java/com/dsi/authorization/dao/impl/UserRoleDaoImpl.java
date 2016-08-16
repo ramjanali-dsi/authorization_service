@@ -32,14 +32,20 @@ public class UserRoleDaoImpl extends BaseDao implements UserRoleDao {
     }
 
     @Override
-    public UserRole getUserRoleByID(String userRoleID) {
+    public UserRole getUserRoleByIdOrRoleID(String userRoleID, String roleID) {
         Session session = null;
         UserRole userRole = null;
+        Query query;
         try {
             session = getSession();
-            Query query = session.createQuery("FROM UserRole ur WHERE ur.userRoleId =:userRoleID");
-            query.setParameter("userRoleID", userRoleID);
+            if(userRoleID != null) {
+                query = session.createQuery("FROM UserRole ur WHERE ur.userRoleId =:userRoleID");
+                query.setParameter("userRoleID", userRoleID);
 
+            } else {
+                query = session.createQuery("FROM UserRole ur WHERE ur.role.roleId =:roleID");
+                query.setParameter("roleID", roleID);
+            }
             userRole = (UserRole) query.uniqueResult();
 
         } catch (Exception e) {

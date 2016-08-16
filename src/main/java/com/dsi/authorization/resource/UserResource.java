@@ -3,13 +3,19 @@ package com.dsi.authorization.resource;
 import com.dsi.authorization.exception.CustomException;
 import com.dsi.authorization.exception.ErrorContext;
 import com.dsi.authorization.exception.ErrorMessage;
+import com.dsi.authorization.model.Role;
 import com.dsi.authorization.model.User;
 import com.dsi.authorization.model.UserRole;
+import com.dsi.authorization.service.RoleService;
 import com.dsi.authorization.service.UserRoleService;
 import com.dsi.authorization.service.UserService;
+import com.dsi.authorization.service.impl.APIProvider;
+import com.dsi.authorization.service.impl.RoleServiceImpl;
 import com.dsi.authorization.service.impl.UserRoleServiceImpl;
 import com.dsi.authorization.service.impl.UserServiceImpl;
 import com.dsi.authorization.util.Constants;
+import com.dsi.authorization.util.Utility;
+import com.dsi.httpclient.HttpClient;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;
@@ -34,6 +40,8 @@ public class UserResource {
 
     private static final Logger logger = Logger.getLogger(UserResource.class);
 
+    private static final HttpClient httpClient = new HttpClient();
+    private static final RoleService roleService = new RoleServiceImpl();
     private static final UserService userService = new UserServiceImpl();
     private static final UserRoleService userRoleService = new UserRoleServiceImpl();
 
@@ -47,15 +55,32 @@ public class UserResource {
         JSONObject responseObj = new JSONObject();
 
         try{
+            User currentUser = userService.getUserByID(user.getCreateBy());
+
+            logger.info("User create:: Start");
+            user.setTenantId(currentUser.getTenantId());
             userService.saveUser(user);
             logger.info("User create successfully.");
 
-            if(user.getUserRole() != null){
-                user.getUserRole().setUser(user);
-                userRoleService.saveUserRole(user.getUserRole());
-                logger.info("User role create successfully.");
-            }
+            String result = httpClient.sendPost(APIProvider.API_CREATE_SESSION, Utility.getLoginObject(user),
+                    Constants.SYSTEM, Constants.SYSTEM_ID);
+            logger.info("v1/create_session api call result: " + result);
 
+            JSONObject resultObj = new JSONObject(result);
+            if(!resultObj.has(Constants.MESSAGE)){
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(result).build();
+            }
+            logger.info("User create:: End");
+
+            UserRole userRole = new UserRole();
+            userRole.setUser(user);
+            userRole.setRole(roleService.getRoleByID(user.getRoleId()));
+            userRole.setSystem(userService.getSystemByUserID(user.getCreateBy()));
+
+            userRoleService.saveUserRole(userRole);
+            logger.info("User role create successfully.");
+
+            responseObj.put("user_id", user.getUserId());
             responseObj.put(Constants.MESSAGE, "Create user success.");
             return Response.ok().entity(responseObj.toString()).build();
 

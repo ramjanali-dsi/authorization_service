@@ -30,6 +30,12 @@ INSERT INTO `service_authorization`.`dsi_api` (`api_id`, `is_active`, `url`, `me
 
 INSERT INTO `service_authorization`.`dsi_api` (`api_id`, `is_active`, `url`, `method`, `version`, `system_id`) VALUES ('87528562-327b-481e-9827-095edaa1f32c', b'1', 'v1/user_session/is_valid', 'POST', '1', '425744ba-6c10-47c0-91cf-5a4c05265b56');
 
+INSERT INTO `service_authorization`.`dsi_api` (`api_id`, `is_active`, `url`, `method`, `version`, `system_id`) VALUES ('5457535d-27ff-4939-96a2-b29a08ab5d87', b'1', 'v1/user', 'POST', '1', '425744ba-6c10-47c0-91cf-5a4c05265b56');
+
+INSERT INTO `service_authorization`.`dsi_api` (`api_id`, `is_active`, `url`, `method`, `version`, `system_id`) VALUES ('ffe06fd4-53f0-4cdd-a273-68d0ed7849f3', b'1', 'v1/login_session/create', 'POST', '1', '425744ba-6c10-47c0-91cf-5a4c05265b56');
+
+
+
 
 ----------------------------------- Authorized API List --------------------------------------
 
@@ -57,4 +63,9 @@ INSERT INTO `service_authorization`.`dsi_default_api` (`default_api_id`, `allow_
 
 INSERT INTO `service_authorization`.`dsi_default_api` (`default_api_id`, `allow_type`, `version`, `api_id`) VALUES ('d4583f3b-00c7-4d97-8e42-aebbd6437ce8', 'Authenticated', '1', 'd70b697c-33f1-4109-b5ab-e5ea1640f064');
 
+INSERT INTO `service_authorization`.`dsi_default_api` (`default_api_id`, `allow_type`, `version`, `api_id`) VALUES ('c3d8e711-8fe4-4678-9a37-7c8a7550e28a', 'System', '1', '5457535d-27ff-4939-96a2-b29a08ab5d87');
+
+INSERT INTO `service_authorization`.`dsi_default_api` (`default_api_id`, `allow_type`, `version`, `api_id`) VALUES ('28c89cf2-3e39-4fbb-9d5f-389a8bc3431f', 'System', '1', 'ffe06fd4-53f0-4cdd-a273-68d0ed7849f3');
+
+INSERT INTO `service_authorization`.`dsi_default_api` (`default_api_id`, `allow_type`, `version`, `api_id`) VALUES ('1f7f0ade-12a4-4918-a9c5-9116cf29a6ac', 'Authenticated', '1', 'f58a9fe2-b4fa-4ff0-b81a-fe10edb08031');
 

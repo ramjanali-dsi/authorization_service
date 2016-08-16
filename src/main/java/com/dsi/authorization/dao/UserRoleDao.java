@@ -10,15 +10,10 @@ import java.util.List;
 public interface UserRoleDao {
 
     boolean saveUserRole(UserRole userRole);
-
     boolean updateUserRole(UserRole userRole);
-
     boolean deleteUserRole(UserRole userRole);
-
-    UserRole getUserRoleByID(String userRoleID);
-
+    UserRole getUserRoleByIdOrRoleID(String userRoleID, String roleID);
     UserRole getUserRoleByUserIdAndSystemIdAndRoleID
             (String userID, String systemID, String roleID);
-
     List<UserRole> getUserRoleListBySystemID(String systemID);
 }

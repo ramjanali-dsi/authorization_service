@@ -11,12 +11,8 @@ import java.util.List;
 public interface RoleService {
 
     void saveRole(Role role) throws CustomException;
-
     void updateRole(Role role) throws CustomException;
-
     void deleteRole(Role role) throws CustomException;
-
     Role getRoleByID(String roleID) throws CustomException;
-
     List<Role> getAllRoles() throws CustomException;
 }

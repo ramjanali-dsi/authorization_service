@@ -1,5 +1,7 @@
 package com.dsi.authorization.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -53,7 +55,10 @@ public class User {
     private int version;
 
     @Transient
-    private UserRole userRole;
+    private String roleId;
+
+    @Transient
+    private UserRole userRole = new UserRole();
 
     public String getUserId() {
         return userId;
@@ -157,5 +162,15 @@ public class User {
 
     public void setUserRole(UserRole userRole) {
         this.userRole = userRole;
+    }
+
+    @JsonIgnore
+    public String getRoleId() {
+        return roleId;
+    }
+
+    @JsonProperty
+    public void setRoleId(String roleId) {
+        this.roleId = roleId;
     }
 }

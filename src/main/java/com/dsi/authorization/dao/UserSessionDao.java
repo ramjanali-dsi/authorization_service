@@ -8,10 +8,7 @@ import com.dsi.authorization.model.UserSession;
 public interface UserSessionDao {
 
     boolean saveUserSession(UserSession userSession);
-
     boolean updateUserSession(UserSession userSession);
-
     boolean deleteUserSession(UserSession userSession);
-
     UserSession getUserSessionByUserIdAndAccessToken(String userID, String accessToken);
 }

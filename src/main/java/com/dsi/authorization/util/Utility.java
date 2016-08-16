@@ -3,7 +3,9 @@ package com.dsi.authorization.util;
 import com.dsi.authorization.exception.CustomException;
 import com.dsi.authorization.exception.ErrorContext;
 import com.dsi.authorization.exception.ErrorMessage;
+import com.dsi.authorization.model.User;
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 import java.util.Base64;
@@ -34,10 +36,6 @@ public class Utility {
         return false;
     }
 
-    public static final String generateRandomString(){
-        return UUID.randomUUID().toString();
-    }
-
     public static final Date today() {
         return new Date();
     }
@@ -60,13 +58,16 @@ public class Utility {
         throw new CustomException(errorMessage);
     }
 
-    public static final String getFinalToken(String header) {
-        String[] tokenPart = header.split("[\\$\\(\\)]");
-        return tokenPart[2];
-    }
+    public static final String getLoginObject(User user) throws JSONException {
+        JSONObject loginObject = new JSONObject();
+        loginObject.put("firstName", user.getFirstName());
+        loginObject.put("lastName", user.getLastName());
+        loginObject.put("email", user.getEmail());
+        loginObject.put("createdBy", user.getCreateBy());
+        loginObject.put("modifiedBy", user.getModifiedBy());
+        loginObject.put("userId", user.getUserId());
+        loginObject.put("version", 1);
 
-    public static final String getTokenSecretKey(String key){
-        byte[] valueDecoded = Base64.getDecoder().decode(key.getBytes());
-        return new String(valueDecoded);
+        return loginObject.toString();
     }
 }

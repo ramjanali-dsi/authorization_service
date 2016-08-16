@@ -9,10 +9,7 @@ import com.dsi.authorization.model.UserSession;
 public interface UserSessionService {
 
     void saveUserSession(UserSession userSession) throws CustomException;
-
     void updateUserSession(UserSession userSession) throws CustomException;
-
     void deleteUserSession(UserSession userSession) throws CustomException;
-
     UserSession getUserSessionByUserIdAndAccessToken(String userID, String accessToken) throws CustomException;
 }
