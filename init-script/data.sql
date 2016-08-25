@@ -45,8 +45,6 @@ INSERT INTO `service_authorization`.`dsi_default_api` (`default_api_id`, `allow_
 
 INSERT INTO `service_authorization`.`dsi_default_api` (`default_api_id`, `allow_type`, `version`, `api_id`) VALUES ('0bc7a08c-e892-4bb1-b781-f634fc211c48', 'Public', '1', 'c79e0ddf-abf5-431f-8478-7bed057b2d9b');
 
-INSERT INTO `service_authorization`.`dsi_default_api` (`default_api_id`, `allow_type`, `version`, `api_id`) VALUES ('ac02dcb2-fbf1-4ea3-afea-a4e24405f844', 'System', '1', 'f58a9fe2-b4fa-4ff0-b81a-fe10edb08031');
-
 INSERT INTO `service_authorization`.`dsi_default_api` (`default_api_id`, `allow_type`, `version`, `api_id`) VALUES ('9b9324ab-37e0-47c2-9c3e-ba07016a1eee', 'System', '1', '9f138829-690d-4567-a18c-c3714aa597e2');
 
 INSERT INTO `service_authorization`.`dsi_default_api` (`default_api_id`, `allow_type`, `version`, `api_id`) VALUES ('7dfbaacd-ce0a-44fe-aa4a-9088edfc0507', 'Authenticated', '1', '4f0c3adc-a5cb-4a82-aaa8-d630dff0abae');

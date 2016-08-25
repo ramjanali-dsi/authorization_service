@@ -60,16 +60,6 @@ public class UserResource {
             logger.info("User create:: Start");
             user.setTenantId(currentUser.getTenantId());
             userService.saveUser(user);
-            logger.info("User create successfully.");
-
-            String result = httpClient.sendPost(APIProvider.API_CREATE_SESSION, Utility.getLoginObject(user),
-                    Constants.SYSTEM, Constants.SYSTEM_ID);
-            logger.info("v1/create_session api call result: " + result);
-
-            JSONObject resultObj = new JSONObject(result);
-            if(!resultObj.has(Constants.MESSAGE)){
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(result).build();
-            }
             logger.info("User create:: End");
 
             UserRole userRole = new UserRole();
