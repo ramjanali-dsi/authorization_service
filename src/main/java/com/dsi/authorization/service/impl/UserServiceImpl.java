@@ -1,7 +1,11 @@
 package com.dsi.authorization.service.impl;
 
 import com.dsi.authorization.dao.UserDao;
+import com.dsi.authorization.dao.UserRoleDao;
+import com.dsi.authorization.dao.UserSessionDao;
 import com.dsi.authorization.dao.impl.UserDaoImpl;
+import com.dsi.authorization.dao.impl.UserRoleDaoImpl;
+import com.dsi.authorization.dao.impl.UserSessionDaoImpl;
 import com.dsi.authorization.exception.CustomException;
 import com.dsi.authorization.exception.ErrorContext;
 import com.dsi.authorization.exception.ErrorMessage;
@@ -65,6 +69,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(User user) throws CustomException {
+
+        userDao.deleteUserSession(user.getUserId());
+        userDao.deleteUserRole(user.getUserId());
+
         boolean res = userDao.deleteUser(user);
         if(!res){
             ErrorContext errorContext = new ErrorContext(null, "User", "User delete failed.");

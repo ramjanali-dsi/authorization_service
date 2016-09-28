@@ -11,6 +11,8 @@ public interface UserDao {
     boolean saveUser(User user);
     boolean updateUser(User user);
     boolean deleteUser(User user);
+    boolean deleteUserSession(String userID);
+    boolean deleteUserRole(String userID);
     User getUserByID(String userID);
     User getUserByEmail(String email);
     System getSystemByUserID(String userID);

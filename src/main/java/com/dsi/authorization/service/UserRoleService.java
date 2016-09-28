@@ -14,5 +14,6 @@ public interface UserRoleService {
     void updateUserRole(UserRole userRole) throws CustomException;
     void deleteUserRole(UserRole userRole) throws CustomException;
     UserRole getUserRoleByIdOrRoleID(String userRoleID, String roleID) throws CustomException;
+    UserRole getUserRoleByUserID(String userID) throws CustomException;
     List<UserRole> getUserRoleListBySystemID(String systemID) throws CustomException;
 }

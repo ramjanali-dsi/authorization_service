@@ -32,8 +32,11 @@ INSERT INTO `service_authorization`.`dsi_api` (`api_id`, `is_active`, `url`, `me
 
 INSERT INTO `service_authorization`.`dsi_api` (`api_id`, `is_active`, `url`, `method`, `version`, `system_id`) VALUES ('5457535d-27ff-4939-96a2-b29a08ab5d87', b'1', 'v1/user', 'POST', '1', '425744ba-6c10-47c0-91cf-5a4c05265b56');
 
+INSERT INTO `service_authorization`.`dsi_api` (`api_id`, `is_active`, `url`, `method`, `version`, `system_id`) VALUES ('1d0c01ee-9609-43e3-9b3a-684050a8583b', b'1', 'v1/user', 'DELETE', '1', '425744ba-6c10-47c0-91cf-5a4c05265b56');
+
 INSERT INTO `service_authorization`.`dsi_api` (`api_id`, `is_active`, `url`, `method`, `version`, `system_id`) VALUES ('ffe06fd4-53f0-4cdd-a273-68d0ed7849f3', b'1', 'v1/login_session/create', 'POST', '1', '425744ba-6c10-47c0-91cf-5a4c05265b56');
 
+INSERT INTO `service_authorization`.`dsi_api` (`api_id`, `is_active`, `url`, `method`, `version`, `system_id`) VALUES ('44e1dc3f-613f-49ac-bab4-41930c82fdd7', b'1', 'v1/login_session/delete', 'DELETE', '1', '425744ba-6c10-47c0-91cf-5a4c05265b56');
 
 
 
@@ -67,3 +70,6 @@ INSERT INTO `service_authorization`.`dsi_default_api` (`default_api_id`, `allow_
 
 INSERT INTO `service_authorization`.`dsi_default_api` (`default_api_id`, `allow_type`, `version`, `api_id`) VALUES ('1f7f0ade-12a4-4918-a9c5-9116cf29a6ac', 'Authenticated', '1', 'f58a9fe2-b4fa-4ff0-b81a-fe10edb08031');
 
+INSERT INTO `service_authorization`.`dsi_default_api` (`default_api_id`, `allow_type`, `version`, `api_id`) VALUES ('2b50993f-881e-413b-8b52-be5e05548d9a', 'System', '1', '1d0c01ee-9609-43e3-9b3a-684050a8583b');
+
+INSERT INTO `service_authorization`.`dsi_default_api` (`default_api_id`, `allow_type`, `version`, `api_id`) VALUES ('ca8fca41-c271-4721-b9fe-f2a29092810d', 'System', '1', '44e1dc3f-613f-49ac-bab4-41930c82fdd7');

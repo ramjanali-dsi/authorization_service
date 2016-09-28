@@ -92,6 +92,18 @@ public class UserRoleServiceImpl implements UserRoleService {
     }
 
     @Override
+    public UserRole getUserRoleByUserID(String userID) throws CustomException {
+        UserRole userRole = userRoleDao.getUserRoleByUserID(userID);
+        if(userRole == null){
+            ErrorContext errorContext = new ErrorContext(userID, "UserRole", "User role not found by userID: " + userID);
+            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0005,
+                    Constants.AUTHORIZATION_SERVICE_0005_DESCRIPTION, errorContext);
+            throw new CustomException(errorMessage);
+        }
+        return userRole;
+    }
+
+    @Override
     public List<UserRole> getUserRoleListBySystemID(String systemID) throws CustomException {
         List<UserRole> userRoleList = userRoleDao.getUserRoleListBySystemID(systemID);
         if(userRoleList == null){

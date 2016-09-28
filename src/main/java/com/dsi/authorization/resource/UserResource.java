@@ -3,19 +3,17 @@ package com.dsi.authorization.resource;
 import com.dsi.authorization.exception.CustomException;
 import com.dsi.authorization.exception.ErrorContext;
 import com.dsi.authorization.exception.ErrorMessage;
-import com.dsi.authorization.model.Role;
 import com.dsi.authorization.model.User;
 import com.dsi.authorization.model.UserRole;
 import com.dsi.authorization.service.RoleService;
 import com.dsi.authorization.service.UserRoleService;
 import com.dsi.authorization.service.UserService;
-import com.dsi.authorization.service.impl.APIProvider;
 import com.dsi.authorization.service.impl.RoleServiceImpl;
 import com.dsi.authorization.service.impl.UserRoleServiceImpl;
 import com.dsi.authorization.service.impl.UserServiceImpl;
 import com.dsi.authorization.util.Constants;
 import com.dsi.authorization.util.Utility;
-import com.dsi.httpclient.HttpClient;
+import com.google.gson.Gson;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;
@@ -40,7 +38,6 @@ public class UserResource {
 
     private static final Logger logger = Logger.getLogger(UserResource.class);
 
-    private static final HttpClient httpClient = new HttpClient();
     private static final RoleService roleService = new RoleServiceImpl();
     private static final UserService userService = new UserServiceImpl();
     private static final UserRoleService userRoleService = new UserRoleServiceImpl();
@@ -55,6 +52,7 @@ public class UserResource {
         JSONObject responseObj = new JSONObject();
 
         try{
+            logger.info("Request body: " + new Gson().toJson(user));
             User currentUser = userService.getUserByID(user.getCreateBy());
 
             logger.info("User create:: Start");
@@ -66,6 +64,12 @@ public class UserResource {
             userRole.setUser(user);
             userRole.setRole(roleService.getRoleByID(user.getRoleId()));
             userRole.setSystem(userService.getSystemByUserID(user.getCreateBy()));
+            userRole.setCreateBy(user.getCreateBy());
+            userRole.setModifiedBy(user.getModifiedBy());
+            userRole.setCreatedDate(Utility.today());
+            userRole.setModifiedDate(Utility.today());
+            userRole.setActive(true);
+            userRole.setVersion(1);
 
             userRoleService.saveUserRole(userRole);
             logger.info("User role create successfully.");

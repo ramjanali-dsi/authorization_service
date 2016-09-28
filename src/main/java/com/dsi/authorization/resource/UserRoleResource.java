@@ -107,4 +107,31 @@ public class UserRoleResource {
             throw new CustomException(errorMessage);
         }
     }
+
+    @GET
+    @Path("/{user_id}")
+    @ApiOperation(value = "Read User Role By User Id", notes = "Read User Role By User Id", position = 4)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Read user role success"),
+            @ApiResponse(code = 500, message = "Read user role failed, unauthorized.")
+    })
+    public Response readUser(@PathParam("user_id") String userID) throws CustomException {
+        JSONObject responseObj = new JSONObject();
+
+        try{
+            UserRole userRole = userRoleService.getUserRoleByUserID(userID);
+            logger.info("Read userRole success.");
+
+            responseObj.put("role_id", userRole.getRole().getRoleId());
+            responseObj.put("role_name", userRole.getRole().getName());
+            responseObj.put(Constants.MESSAGE, "Read user role success.");
+            return Response.ok().entity(responseObj.toString()).build();
+
+        } catch (JSONException je){
+            ErrorContext errorContext = new ErrorContext(null, null, je.getMessage());
+            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0009,
+                    Constants.AUTHORIZATION_SERVICE_0009_DESCRIPTION, errorContext);
+            throw new CustomException(errorMessage);
+        }
+    }
 }

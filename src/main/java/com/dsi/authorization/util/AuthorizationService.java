@@ -15,6 +15,6 @@ public class AuthorizationService extends ResourceConfig {
         register(ResponseCORSFilter.class);
         register(CheckAuthorizationFilter.class);
 
-        SessionUtil.getSession();
+        //SessionUtil.getSession();
     }
 }

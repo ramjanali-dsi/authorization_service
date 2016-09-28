@@ -88,7 +88,6 @@ public class UserSessionResource {
             userSession.setAccessToken(newAccessToken);
             userSession.setModifiedBy(userID);
             userSession.setModifiedDate(Utility.today());
-            userSession.setVersion(1);
 
             userSessionService.updateUserSession(userSession);
             logger.info("User session update successfully.");

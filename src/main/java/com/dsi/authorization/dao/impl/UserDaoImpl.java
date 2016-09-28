@@ -30,6 +30,52 @@ public class UserDaoImpl extends BaseDao implements UserDao {
     }
 
     @Override
+    public boolean deleteUserSession(String userID) {
+        Session session = null;
+        boolean success = true;
+        try {
+            session = getSession();
+            Query query = session.createQuery("DELETE FROM UserSession us WHERE us.userId =:userID");
+            query.setParameter("userID", userID);
+
+            success = query.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            logger.error("Database error occurs when delete: " + e.getMessage());
+            success = false;
+
+        } finally {
+            if(session != null) {
+                close(session);
+            }
+        }
+        return success;
+    }
+
+    @Override
+    public boolean deleteUserRole(String userID) {
+        Session session = null;
+        boolean success = true;
+        try {
+            session = getSession();
+            Query query = session.createQuery("DELETE FROM UserRole ur WHERE ur.user.userId =:userID");
+            query.setParameter("userID", userID);
+
+            success = query.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            logger.error("Database error occurs when delete: " + e.getMessage());
+            success = false;
+
+        } finally {
+            if(session != null) {
+                close(session);
+            }
+        }
+        return success;
+    }
+
+    @Override
     public User getUserByID(String userID) {
         Session session = null;
         User user = null;

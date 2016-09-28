@@ -38,13 +38,13 @@ public class UserRole {
     @Column(name = "created_date")
     private Date createdDate;
 
-    @Column(name = "created_by", nullable = false, length = 40)
+    @Column(name = "created_by", length = 40)
     private String createBy;
 
     @Column(name = "modified_date")
     private Date modifiedDate;
 
-    @Column(name = "modified_by", nullable = false, length = 40)
+    @Column(name = "modified_by", length = 40)
     private String modifiedBy;
 
     private int version;
