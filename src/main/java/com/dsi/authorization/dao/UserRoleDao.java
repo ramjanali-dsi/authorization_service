@@ -1,6 +1,8 @@
 package com.dsi.authorization.dao;
 
+import com.dsi.authorization.exception.CustomException;
 import com.dsi.authorization.model.UserRole;
+import org.hibernate.Session;
 
 import java.util.List;
 
@@ -9,9 +11,10 @@ import java.util.List;
  */
 public interface UserRoleDao {
 
-    boolean saveUserRole(UserRole userRole);
-    boolean updateUserRole(UserRole userRole);
-    boolean deleteUserRole(UserRole userRole);
+    void setSession(Session session);
+    void saveUserRole(UserRole userRole) throws CustomException;
+    void updateUserRole(UserRole userRole) throws CustomException;
+    void deleteUserRole(UserRole userRole) throws CustomException;
     UserRole getUserRoleByIdOrRoleID(String userRoleID, String roleID);
     UserRole getUserRoleByUserIdAndSystemIdAndRoleID
             (String userID, String systemID, String roleID);

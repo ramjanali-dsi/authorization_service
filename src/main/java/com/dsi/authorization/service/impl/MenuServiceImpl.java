@@ -9,13 +9,14 @@ import com.dsi.authorization.model.Menu;
 import com.dsi.authorization.service.MenuService;
 import com.dsi.authorization.util.Constants;
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
 
 import java.util.List;
 
 /**
  * Created by sabbir on 8/10/16.
  */
-public class MenuServiceImpl implements MenuService {
+public class MenuServiceImpl extends CommonService implements MenuService {
 
     private static final Logger logger = Logger.getLogger(MenuServiceImpl.class);
 
@@ -23,20 +24,20 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public void saveMenu(Menu menu) throws CustomException {
-        validateInputForCreation(menu);
+        Session session = getSession();
+        menuDao.setSession(session);
 
-        boolean res = menuDao.saveMenu(menu);
-        if(!res){
-            ErrorContext errorContext = new ErrorContext(null, "Menu", "Menu create failed.");
-            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0002,
-                    Constants.AUTHORIZATION_SERVICE_0002_DESCRIPTION, errorContext);
-            throw new CustomException(errorMessage);
-        }
+        validateInputForCreation(menu, session);
+
+        menuDao.saveMenu(menu);
         logger.info("Menu save success.");
+
+        close(session);
     }
 
-    private void validateInputForCreation(Menu menu) throws CustomException {
+    private void validateInputForCreation(Menu menu, Session session) throws CustomException{
         if(menu.getName() == null){
+            close(session);
             ErrorContext errorContext = new ErrorContext(null, "Menu", "Menu Name not defined.");
             ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0001,
                     Constants.AUTHORIZATION_SERVICE_0001_DESCRIPTION, errorContext);
@@ -44,6 +45,7 @@ public class MenuServiceImpl implements MenuService {
         }
 
         if(menuDao.getMenuByIdOrName(null, menu.getName()) != null){
+            close(session);
             ErrorContext errorContext = new ErrorContext(menu.getName(), "Menu", "Menu already exist by this name.");
             ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0002,
                     Constants.AUTHORIZATION_SERVICE_0002_DESCRIPTION, errorContext);
@@ -53,49 +55,48 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public void updateMenu(Menu menu) throws CustomException {
-        boolean res = menuDao.updateMenu(menu);
-        if(!res){
-            ErrorContext errorContext = new ErrorContext(null, "Menu", "Menu update failed.");
-            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0003,
-                    Constants.AUTHORIZATION_SERVICE_0003_DESCRIPTION, errorContext);
-            throw new CustomException(errorMessage);
-        }
+        Session session = getSession();
+        menuDao.setSession(session);
+
+        menuDao.updateMenu(menu);
         logger.info("Menu update success.");
+
+        close(session);
     }
 
     @Override
     public void deleteMenu(Menu menu) throws CustomException {
-        boolean res = menuDao.deleteMenu(menu);
-        if(!res){
-            ErrorContext errorContext = new ErrorContext(null, "Menu", "Menu delete failed.");
-            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0003,
-                    Constants.AUTHORIZATION_SERVICE_0003_DESCRIPTION, errorContext);
-            throw new CustomException(errorMessage);
-        }
-        logger.info("Menu delete success.");
-    }
+        Session session = getSession();
+        menuDao.setSession(session);
 
-    @Override
-    public List<Menu> getAllSubMenus(String menuID) throws CustomException {
-        List<Menu> subMenuList = menuDao.getAllSubMenus(menuID);
-        if(subMenuList == null){
-            ErrorContext errorContext = new ErrorContext(null, "Menu", "Menu list not found.");
-            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0005,
-                    Constants.AUTHORIZATION_SERVICE_0005_DESCRIPTION, errorContext);
-            throw new CustomException(errorMessage);
-        }
-        return subMenuList;
+        menuDao.deleteMenu(menu);
+        logger.info("Menu delete success.");
+
+        close(session);
     }
 
     @Override
     public List<Menu> getAllMenus(String userID) throws CustomException {
+        Session session = getSession();
+        menuDao.setSession(session);
+
         List<Menu> menuList = menuDao.getAllMenus(userID);
         if(menuList == null){
+            close(session);
             ErrorContext errorContext = new ErrorContext(null, "Menu", "Menu list not found.");
             ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0005,
                     Constants.AUTHORIZATION_SERVICE_0005_DESCRIPTION, errorContext);
             throw new CustomException(errorMessage);
         }
+        logger.info("Menu list size: " + menuList.size());
+
+        for(Menu menu : menuList) {
+            List<Menu> subMenuList = menuDao.getAllSubMenus(menu.getMenuId());
+            logger.info("Sub menu list size: " + subMenuList.size());
+            menu.setSubMenuList(subMenuList);
+        }
+
+        close(session);
         return menuList;
     }
 }

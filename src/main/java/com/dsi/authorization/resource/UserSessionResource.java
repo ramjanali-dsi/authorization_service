@@ -46,10 +46,6 @@ public class UserSessionResource {
         try{
             logger.info("Access Token: " + userSession.getAccessToken());
 
-            userSession.setCreatedDate(Utility.today());
-            userSession.setModifiedDate(Utility.today());
-            userSession.setVersion(1);
-
             userSessionService.saveUserSession(userSession);
             logger.info("User session save successfully.");
 
@@ -76,20 +72,8 @@ public class UserSessionResource {
         try{
             logger.info("Request Body:: " + requestBody);
             requestObj = new JSONObject(requestBody);
-            String userID = Utility.validation(requestObj, "userId");
-            String accessToken = Utility.validation(requestObj, "accessToken");
-            String newAccessToken = Utility.validation(requestObj, "newAccessToken");
 
-            UserSession userSession = userSessionService.
-                    getUserSessionByUserIdAndAccessToken(userID, accessToken);
-
-            logger.info("New accessToken: " + newAccessToken);
-
-            userSession.setAccessToken(newAccessToken);
-            userSession.setModifiedBy(userID);
-            userSession.setModifiedDate(Utility.today());
-
-            userSessionService.updateUserSession(userSession);
+            userSessionService.updateUserSession(requestObj);
             logger.info("User session update successfully.");
 
             responseObj.put(Constants.MESSAGE, "Update user session success.");
@@ -115,13 +99,8 @@ public class UserSessionResource {
         try {
             logger.info("Request Body:: " + requestBody);
             requestObj = new JSONObject(requestBody);
-            String userID = Utility.validation(requestObj, "userId");
-            String accessToken = Utility.validation(requestObj, "accessToken");
 
-            UserSession userSession = userSessionService.
-                    getUserSessionByUserIdAndAccessToken(userID, accessToken);
-
-            userSessionService.deleteUserSession(userSession);
+            userSessionService.deleteUserSession(requestObj);
             logger.info("Delete user session successfully.");
 
             responseObj.put(Constants.MESSAGE, "Delete user session success");

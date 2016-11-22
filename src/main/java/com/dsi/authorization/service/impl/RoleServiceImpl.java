@@ -8,13 +8,14 @@ import com.dsi.authorization.exception.ErrorMessage;
 import com.dsi.authorization.model.Role;
 import com.dsi.authorization.service.RoleService;
 import com.dsi.authorization.util.Constants;
+import org.hibernate.Session;
 
 import java.util.List;
 
 /**
  * Created by sabbir on 6/27/16.
  */
-public class RoleServiceImpl implements RoleService {
+public class RoleServiceImpl extends CommonService implements RoleService {
 
     private static final RoleDao roleDao = new RoleDaoImpl();
 
@@ -22,21 +23,21 @@ public class RoleServiceImpl implements RoleService {
     public void saveRole(Role role) throws CustomException {
         validateInputForCreation(role);
 
+        Session session = getSession();
+        roleDao.setSession(session);
+
         Role isRoleExist = roleDao.getRoleByName(role.getName());
         if(isRoleExist != null){
+            close(session);
             ErrorContext errorContext = new ErrorContext(null, "Role", "Role already exist.");
             ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0002,
                     Constants.AUTHORIZATION_SERVICE_0002_DESCRIPTION, errorContext);
             throw new CustomException(errorMessage);
         }
 
-        boolean res = roleDao.saveRole(role);
-        if(!res){
-            ErrorContext errorContext = new ErrorContext(null, "Role", "Role create failed.");
-            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0002,
-                    Constants.AUTHORIZATION_SERVICE_0002_DESCRIPTION, errorContext);
-            throw new CustomException(errorMessage);
-        }
+        roleDao.saveRole(role);
+
+        close(session);
     }
 
     private void validateInputForCreation(Role role) throws CustomException {
@@ -51,47 +52,58 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public void updateRole(Role role) throws CustomException {
-        boolean res = roleDao.updateRole(role);
-        if(!res){
-            ErrorContext errorContext = new ErrorContext(null, "Role", "Role update failed.");
-            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0003,
-                    Constants.AUTHORIZATION_SERVICE_0003_DESCRIPTION, errorContext);
-            throw new CustomException(errorMessage);
-        }
+        Session session = getSession();
+        roleDao.setSession(session);
+
+        roleDao.updateRole(role);
+
+        close(session);
     }
 
     @Override
-    public void deleteRole(Role role) throws CustomException {
-        boolean res = roleDao.deleteRole(role);
-        if(!res){
-            ErrorContext errorContext = new ErrorContext(null, "Role", "Role delete failed.");
-            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0004,
-                    Constants.AUTHORIZATION_SERVICE_0004_DESCRIPTION, errorContext);
-            throw new CustomException(errorMessage);
-        }
+    public void deleteRole(String roleID) throws CustomException {
+        Session session = getSession();
+        roleDao.setSession(session);
+
+        Role role = roleDao.getRoleByID(roleID);
+        roleDao.deleteRole(role);
+
+        close(session);
     }
 
     @Override
     public Role getRoleByID(String roleID) throws CustomException {
+        Session session = getSession();
+        roleDao.setSession(session);
+
         Role role = roleDao.getRoleByID(roleID);
         if(role == null){
+            close(session);
             ErrorContext errorContext = new ErrorContext(roleID, "Role", "Role not found by roleID: " + roleID);
             ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0005,
                     Constants.AUTHORIZATION_SERVICE_0005_DESCRIPTION, errorContext);
             throw new CustomException(errorMessage);
         }
+
+        close(session);
         return role;
     }
 
     @Override
     public List<Role> getAllRoles() throws CustomException {
+        Session session = getSession();
+        roleDao.setSession(session);
+
         List<Role> roleList = roleDao.getAllRoles();
         if(roleList == null){
+            close(session);
             ErrorContext errorContext = new ErrorContext(null, "Role", "Role list not found.");
             ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0005,
                     Constants.AUTHORIZATION_SERVICE_0005_DESCRIPTION, errorContext);
             throw new CustomException(errorMessage);
         }
+
+        close(session);
         return roleList;
     }
 }

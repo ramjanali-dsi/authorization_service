@@ -4,15 +4,9 @@ import com.dsi.authorization.exception.CustomException;
 import com.dsi.authorization.exception.ErrorContext;
 import com.dsi.authorization.exception.ErrorMessage;
 import com.dsi.authorization.model.User;
-import com.dsi.authorization.model.UserRole;
-import com.dsi.authorization.service.RoleService;
-import com.dsi.authorization.service.UserRoleService;
 import com.dsi.authorization.service.UserService;
-import com.dsi.authorization.service.impl.RoleServiceImpl;
-import com.dsi.authorization.service.impl.UserRoleServiceImpl;
 import com.dsi.authorization.service.impl.UserServiceImpl;
 import com.dsi.authorization.util.Constants;
-import com.dsi.authorization.util.Utility;
 import com.google.gson.Gson;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -38,9 +32,7 @@ public class UserResource {
 
     private static final Logger logger = Logger.getLogger(UserResource.class);
 
-    private static final RoleService roleService = new RoleServiceImpl();
     private static final UserService userService = new UserServiceImpl();
-    private static final UserRoleService userRoleService = new UserRoleServiceImpl();
 
     @POST
     @ApiOperation(value = "User Create With Role / Without Role", notes = "User Create With Role / Without Role", position = 1)
@@ -53,26 +45,10 @@ public class UserResource {
 
         try{
             logger.info("Request body: " + new Gson().toJson(user));
-            User currentUser = userService.getUserByID(user.getCreateBy());
 
             logger.info("User create:: Start");
-            user.setTenantId(currentUser.getTenantId());
             userService.saveUser(user);
             logger.info("User create:: End");
-
-            UserRole userRole = new UserRole();
-            userRole.setUser(user);
-            userRole.setRole(roleService.getRoleByID(user.getRoleId()));
-            userRole.setSystem(userService.getSystemByUserID(user.getCreateBy()));
-            userRole.setCreateBy(user.getCreateBy());
-            userRole.setModifiedBy(user.getModifiedBy());
-            userRole.setCreatedDate(Utility.today());
-            userRole.setModifiedDate(Utility.today());
-            userRole.setActive(true);
-            userRole.setVersion(1);
-
-            userRoleService.saveUserRole(userRole);
-            logger.info("User role create successfully.");
 
             responseObj.put("user_id", user.getUserId());
             responseObj.put(Constants.MESSAGE, "Create user success.");
@@ -121,8 +97,7 @@ public class UserResource {
         JSONObject responseObj = new JSONObject();
 
         try{
-            User user = userService.getUserByID(userID);
-            userService.deleteUser(user);
+            userService.deleteUser(userID);
             logger.info("User delete successfully.");
 
             responseObj.put(Constants.MESSAGE, "Delete user success.");

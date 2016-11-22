@@ -18,8 +18,6 @@ public class CustomExceptionHandler implements ExceptionMapper<CustomException> 
     @Override
     public Response toResponse(CustomException ex) {
         logger.error("---Internal server error: " + ex.getMessage());
-        //ex.printStackTrace();
-
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.getErrorMessage()).build();
     }
 }

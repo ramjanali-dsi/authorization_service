@@ -1,9 +1,12 @@
 package com.dsi.authorization.dao.impl;
 
 import com.dsi.authorization.dao.UserRoleDao;
-import com.dsi.authorization.model.User;
+import com.dsi.authorization.exception.CustomException;
+import com.dsi.authorization.exception.ErrorContext;
+import com.dsi.authorization.exception.ErrorMessage;
 import com.dsi.authorization.model.UserRole;
-import org.apache.log4j.Logger;
+import com.dsi.authorization.service.impl.CommonService;
+import com.dsi.authorization.util.Constants;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -12,117 +15,113 @@ import java.util.List;
 /**
  * Created by sabbir on 6/24/16.
  */
-public class UserRoleDaoImpl extends BaseDao implements UserRoleDao {
+public class UserRoleDaoImpl extends CommonService implements UserRoleDao {
 
-    private static final Logger logger = Logger.getLogger(UserRoleDaoImpl.class);
+    private Session session;
 
     @Override
-    public boolean saveUserRole(UserRole userRole) {
-        return save(userRole);
+    public void setSession(Session session) {
+        this.session = session;
     }
 
     @Override
-    public boolean updateUserRole(UserRole userRole) {
-        return update(userRole);
+    public void saveUserRole(UserRole userRole) throws CustomException {
+        try{
+            session.save(userRole);
+
+        } catch (Exception e){
+            close(session);
+            ErrorContext errorContext = new ErrorContext(null, "UserRole", e.getMessage());
+            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0002,
+                    Constants.AUTHORIZATION_SERVICE_0002_DESCRIPTION, errorContext);
+            throw new CustomException(errorMessage);
+        }
     }
 
     @Override
-    public boolean deleteUserRole(UserRole userRole) {
-        return delete(userRole);
+    public void updateUserRole(UserRole userRole) throws CustomException {
+        try{
+            session.update(userRole);
+
+        } catch (Exception e){
+            close(session);
+            ErrorContext errorContext = new ErrorContext(null, "UserRole", e.getMessage());
+            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0003,
+                    Constants.AUTHORIZATION_SERVICE_0003_DESCRIPTION, errorContext);
+            throw new CustomException(errorMessage);
+        }
+    }
+
+    @Override
+    public void deleteUserRole(UserRole userRole) throws CustomException {
+        try{
+            session.delete(userRole);
+
+        } catch (Exception e){
+            close(session);
+            ErrorContext errorContext = new ErrorContext(null, "UserRole", e.getMessage());
+            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0004,
+                    Constants.AUTHORIZATION_SERVICE_0004_DESCRIPTION, errorContext);
+            throw new CustomException(errorMessage);
+        }
     }
 
     @Override
     public UserRole getUserRoleByIdOrRoleID(String userRoleID, String roleID) {
-        Session session = null;
-        UserRole userRole = null;
         Query query;
-        try {
-            session = getSession();
-            if(userRoleID != null) {
-                query = session.createQuery("FROM UserRole ur WHERE ur.userRoleId =:userRoleID");
-                query.setParameter("userRoleID", userRoleID);
+        if(userRoleID != null) {
+            query = session.createQuery("FROM UserRole ur WHERE ur.userRoleId =:userRoleID");
+            query.setParameter("userRoleID", userRoleID);
 
-            } else {
-                query = session.createQuery("FROM UserRole ur WHERE ur.role.roleId =:roleID");
-                query.setParameter("roleID", roleID);
-            }
-            userRole = (UserRole) query.uniqueResult();
-
-        } catch (Exception e) {
-            logger.error("Database error occurs when get: " + e.getMessage());
-        } finally {
-            if(session != null) {
-                close(session);
-            }
+        } else {
+            query = session.createQuery("FROM UserRole ur WHERE ur.role.roleId =:roleID");
+            query.setParameter("roleID", roleID);
         }
-        return userRole;
+
+        UserRole userRole = (UserRole) query.uniqueResult();
+        if(userRole != null) {
+            return userRole;
+        }
+        return null;
     }
 
     @Override
     public UserRole getUserRoleByUserIdAndSystemIdAndRoleID(String userID, String systemID, String roleID) {
-        Session session = null;
-        UserRole userRole = null;
-        try {
-            session = getSession();
-            Query query = session.createQuery("FROM UserRole ur WHERE ur.user.id =:userID AND " +
-                    "ur.system.id =:systemID AND ur.role.id =:roleID");
+        Query query = session.createQuery("FROM UserRole ur WHERE ur.user.id =:userID AND " +
+                "ur.system.id =:systemID AND ur.role.id =:roleID");
 
-            query.setParameter("userID", userID);
-            query.setParameter("roleID", roleID);
-            query.setParameter("systemID", systemID);
+        query.setParameter("userID", userID);
+        query.setParameter("roleID", roleID);
+        query.setParameter("systemID", systemID);
 
-            userRole = (UserRole) query.uniqueResult();
-
-        } catch (Exception e) {
-            logger.error("Database error occurs when get: " + e.getMessage());
-        } finally {
-            if(session != null) {
-                close(session);
-            }
+        UserRole userRole = (UserRole) query.uniqueResult();
+        if(userRole != null) {
+            return userRole;
         }
-        return userRole;
+        return null;
     }
 
     @Override
     public UserRole getUserRoleByUserID(String userID) {
-        Session session = null;
-        UserRole userRole = null;
-        try {
-            session = getSession();
-            Query query = session.createQuery("FROM UserRole ur WHERE ur.user.id =:userID");
-            query.setParameter("userID", userID);
+        Query query = session.createQuery("FROM UserRole ur WHERE ur.user.id =:userID");
+        query.setParameter("userID", userID);
 
-            userRole = (UserRole) query.uniqueResult();
-
-        } catch (Exception e) {
-            logger.error("Database error occurs when get: " + e.getMessage());
-        } finally {
-            if(session != null) {
-                close(session);
-            }
+        UserRole userRole = (UserRole) query.uniqueResult();
+        if(userRole != null) {
+            return userRole;
         }
-        return userRole;
+        return null;
     }
 
     @Override
     public List<UserRole> getUserRoleListBySystemID(String systemID) {
-        Session session = null;
-        List<UserRole> userRoleList = null;
-        try {
-            session = getSession();
-            Query query = session.createQuery("FROM UserRole ur WHERE ur.system.id =:systemID");
+        Query query = session.createQuery("FROM UserRole ur WHERE ur.system.id =:systemID");
+        query.setParameter("systemID", systemID);
 
-            query.setParameter("systemID", systemID);
-
-            userRoleList = query.list();
-
-        } catch (Exception e) {
-            logger.error("Database error occurs when get: " + e.getMessage());
-        } finally {
-            if(session != null) {
-                close(session);
-            }
+        List<UserRole> userRoleList = query.list();
+        if(userRoleList != null){
+            return userRoleList;
         }
-        return userRoleList;
+        return null;
     }
 }

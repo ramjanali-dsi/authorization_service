@@ -9,11 +9,14 @@ import com.dsi.authorization.exception.ErrorMessage;
 import com.dsi.authorization.model.UserSession;
 import com.dsi.authorization.service.UserSessionService;
 import com.dsi.authorization.util.Constants;
+import com.dsi.authorization.util.Utility;
+import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.Session;
 
 /**
  * Created by sabbir on 6/15/16.
  */
-public class UserSessionServiceImpl implements UserSessionService {
+public class UserSessionServiceImpl extends CommonService implements UserSessionService {
 
     private static final UserSessionDao dao = new UserSessionDaoImpl();
 
@@ -21,13 +24,15 @@ public class UserSessionServiceImpl implements UserSessionService {
     public void saveUserSession(UserSession userSession) throws CustomException {
         validateInputForCreation(userSession);
 
-        boolean res = dao.saveUserSession(userSession);
-        if(!res){
-            ErrorContext errorContext = new ErrorContext(null, "UserSession", "User session create failed.");
-            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0002,
-                    Constants.AUTHORIZATION_SERVICE_0002_DESCRIPTION, errorContext);
-            throw new CustomException(errorMessage);
-        }
+        Session session = getSession();
+        dao.setSession(session);
+
+        userSession.setCreatedDate(Utility.today());
+        userSession.setModifiedDate(Utility.today());
+        userSession.setVersion(1);
+        dao.saveUserSession(userSession);
+
+        close(session);
     }
 
     private void validateInputForCreation(UserSession userSession) throws CustomException {
@@ -46,37 +51,54 @@ public class UserSessionServiceImpl implements UserSessionService {
     }
 
     @Override
-    public void updateUserSession(UserSession userSession) throws CustomException{
-        boolean res = dao.updateUserSession(userSession);
-        if(!res){
-            ErrorContext errorContext = new ErrorContext(null, "UserSession", "User session update failed.");
-            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0003,
-                    Constants.AUTHORIZATION_SERVICE_0003_DESCRIPTION, errorContext);
-            throw new CustomException(errorMessage);
-        }
+    public void updateUserSession(JSONObject userSessionObject) throws CustomException{
+        Session session = getSession();
+        dao.setSession(session);
+
+        String userID = Utility.validation(userSessionObject, "userId");
+        String accessToken = Utility.validation(userSessionObject, "accessToken");
+        String newAccessToken = Utility.validation(userSessionObject, "newAccessToken");
+
+        UserSession userSession = dao.getUserSessionByUserIdAndAccessToken(userID, accessToken);
+
+        userSession.setAccessToken(newAccessToken);
+        userSession.setModifiedBy(userID);
+        userSession.setModifiedDate(Utility.today());
+        dao.updateUserSession(userSession);
+
+        close(session);
     }
 
     @Override
-    public void deleteUserSession(UserSession userSession) throws CustomException{
-        boolean res = dao.deleteUserSession(userSession);
-        if(!res){
-            ErrorContext errorContext = new ErrorContext(null, "UserSession", "User session delete failed.");
-            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0004,
-                    Constants.AUTHORIZATION_SERVICE_0004_DESCRIPTION, errorContext);
-            throw new CustomException(errorMessage);
-        }
+    public void deleteUserSession(JSONObject userSessionObject) throws CustomException{
+        Session session = getSession();
+        dao.setSession(session);
+
+        String userID = Utility.validation(userSessionObject, "userId");
+        String accessToken = Utility.validation(userSessionObject, "accessToken");
+
+        UserSession userSession = dao.getUserSessionByUserIdAndAccessToken(userID, accessToken);
+        dao.deleteUserSession(userSession);
+
+        close(session);
     }
 
     @Override
     public UserSession getUserSessionByUserIdAndAccessToken(String userID, String accessToken) throws CustomException {
+        Session session = getSession();
+        dao.setSession(session);
+
         UserSession userSession = dao.getUserSessionByUserIdAndAccessToken(userID, accessToken);
         if(userSession == null){
+            close(session);
             ErrorContext errorContext = new ErrorContext(null, "UserSession", "User session not found by userID: "
                     + userID +" & accessToken: "+ accessToken);
             ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0005,
                     Constants.AUTHORIZATION_SERVICE_0005_DESCRIPTION, errorContext);
             throw new CustomException(errorMessage);
         }
+
+        close(session);
         return userSession;
     }
 }

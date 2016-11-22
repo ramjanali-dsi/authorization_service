@@ -11,7 +11,7 @@ public interface UserService {
 
     void saveUser(User user) throws CustomException;
     void updateUser(User user) throws CustomException;
-    void deleteUser(User user) throws CustomException;
+    void deleteUser(String userID) throws CustomException;
     User getUserByID(String userID) throws CustomException;
     System getSystemByUserID(String userID) throws CustomException;
 }

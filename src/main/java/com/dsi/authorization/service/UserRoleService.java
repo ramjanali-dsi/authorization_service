@@ -12,7 +12,7 @@ public interface UserRoleService {
 
     void saveUserRole(UserRole userRole) throws CustomException;
     void updateUserRole(UserRole userRole) throws CustomException;
-    void deleteUserRole(UserRole userRole) throws CustomException;
+    void deleteUserRole(String userRoleID) throws CustomException;
     UserRole getUserRoleByIdOrRoleID(String userRoleID, String roleID) throws CustomException;
     UserRole getUserRoleByUserID(String userID) throws CustomException;
     List<UserRole> getUserRoleListBySystemID(String systemID) throws CustomException;

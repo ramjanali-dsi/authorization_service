@@ -2,6 +2,7 @@ package com.dsi.authorization.dao;
 
 import com.dsi.authorization.exception.CustomException;
 import com.dsi.authorization.model.Menu;
+import org.hibernate.Session;
 
 import java.util.List;
 
@@ -10,9 +11,10 @@ import java.util.List;
  */
 public interface MenuDao {
 
-    boolean saveMenu(Menu menu);
-    boolean updateMenu(Menu menu);
-    boolean deleteMenu(Menu menu);
+    void setSession(Session session);
+    void saveMenu(Menu menu) throws CustomException;
+    void updateMenu(Menu menu) throws CustomException;
+    void deleteMenu(Menu menu) throws CustomException;
     Menu getMenuByIdOrName(String menuID, String name);
     List<Menu> getAllSubMenus(String menuID);
     List<Menu> getAllMenus(String userID);

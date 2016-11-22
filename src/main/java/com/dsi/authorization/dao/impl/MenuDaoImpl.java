@@ -1,8 +1,12 @@
 package com.dsi.authorization.dao.impl;
 
 import com.dsi.authorization.dao.MenuDao;
+import com.dsi.authorization.exception.CustomException;
+import com.dsi.authorization.exception.ErrorContext;
+import com.dsi.authorization.exception.ErrorMessage;
 import com.dsi.authorization.model.Menu;
-import org.apache.log4j.Logger;
+import com.dsi.authorization.service.impl.CommonService;
+import com.dsi.authorization.util.Constants;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -11,94 +15,100 @@ import java.util.List;
 /**
  * Created by sabbir on 8/10/16.
  */
-public class MenuDaoImpl extends BaseDao implements MenuDao {
+public class MenuDaoImpl extends CommonService implements MenuDao {
 
-    private static final Logger logger = Logger.getLogger(MenuDaoImpl.class);
+    private Session session;
 
     @Override
-    public boolean saveMenu(Menu menu) {
-        return save(menu);
+    public void setSession(Session session) {
+        this.session = session;
     }
 
     @Override
-    public boolean updateMenu(Menu menu) {
-        return update(menu);
+    public void saveMenu(Menu menu) throws CustomException {
+        try{
+            session.save(menu);
+
+        } catch (Exception e){
+            close(session);
+            ErrorContext errorContext = new ErrorContext(null, "Menu", e.getMessage());
+            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0002,
+                    Constants.AUTHORIZATION_SERVICE_0002_DESCRIPTION, errorContext);
+            throw new CustomException(errorMessage);
+        }
     }
 
     @Override
-    public boolean deleteMenu(Menu menu) {
-        return delete(menu);
+    public void updateMenu(Menu menu) throws CustomException {
+        try{
+            session.update(menu);
+
+        } catch (Exception e){
+            close(session);
+            ErrorContext errorContext = new ErrorContext(null, "Menu", e.getMessage());
+            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0003,
+                    Constants.AUTHORIZATION_SERVICE_0003_DESCRIPTION, errorContext);
+            throw new CustomException(errorMessage);
+        }
+    }
+
+    @Override
+    public void deleteMenu(Menu menu) throws CustomException {
+        try {
+            session.delete(menu);
+
+        } catch (Exception e){
+            close(session);
+            ErrorContext errorContext = new ErrorContext(null, "Menu", e.getMessage());
+            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0004,
+                    Constants.AUTHORIZATION_SERVICE_0004_DESCRIPTION, errorContext);
+            throw new CustomException(errorMessage);
+        }
     }
 
     @Override
     public Menu getMenuByIdOrName(String menuID, String name) {
-        Session session = null;
-        Menu menu = null;
         Query query;
-        try{
-            session = getSession();
-            if(menuID != null){
-                query = session.createQuery("FROM Menu m WHERE m.menuId =:menuID");
-                query.setParameter("menuID", menuID);
+        if(menuID != null){
+            query = session.createQuery("FROM Menu m WHERE m.menuId =:menuID");
+            query.setParameter("menuID", menuID);
 
-            } else {
-                query = session.createQuery("FROM Menu m WHERE m.name =:name");
-                query.setParameter("name", name);
-            }
-
-            menu = (Menu) query.uniqueResult();
-
-        } catch (Exception e){
-            logger.error("Database error occurs when get: " + e.getMessage());
-        } finally {
-            if(session != null) {
-                close(session);
-            }
+        } else {
+            query = session.createQuery("FROM Menu m WHERE m.name =:name");
+            query.setParameter("name", name);
         }
-        return menu;
+
+        Menu menu = (Menu) query.uniqueResult();
+        if(menu != null){
+            return menu;
+        }
+        return null;
     }
 
     @Override
     public List<Menu> getAllSubMenus(String menuID) {
-        Session session = null;
-        List<Menu> menuList = null;
-        try {
-            session = getSession();
-            Query query = session.createQuery("FROM Menu m WHERE m.parentMenuId =:menuID ORDER BY m.position ASC");
-            query.setParameter("menuID", menuID);
+        Query query = session.createQuery("FROM Menu m WHERE m.parentMenuId =:menuID ORDER BY m.position ASC");
+        query.setParameter("menuID", menuID);
 
-            menuList = query.list();
-
-        } catch (Exception e) {
-            logger.error("Database error occurs when get: " + e.getMessage());
-        } finally {
-            if(session != null) {
-                close(session);
-            }
+        List<Menu> menuList = query.list();
+        if(menuList != null){
+            return menuList;
         }
-        return menuList;
+        return null;
     }
 
     @Override
     public List<Menu> getAllMenus(String userID) {
-        Session session = null;
-        List<Menu> menuList = null;
-        try {
-            session = getSession();
-            Query query = session.createQuery("FROM Menu m WHERE m.parentMenuId is null AND m.menuId in " +
-                    "(SELECT rm.menu.menuId FROM RoleMenu rm WHERE rm.role.roleId in " +
-                    "(SELECT ur.role.roleId FROM UserRole ur WHERE ur.user.userId =:userID)) ORDER BY m.position ASC");
-            query.setParameter("userID", userID);
 
-            menuList = query.list();
+        Query query = session.createQuery("FROM Menu m WHERE m.parentMenuId is null AND m.menuId in " +
+                "(SELECT rm.menu.menuId FROM RoleMenu rm WHERE rm.role.roleId in " +
+                "(SELECT ur.role.roleId FROM UserRole ur WHERE ur.user.userId =:userID)) ORDER BY m.position ASC");
+        query.setParameter("userID", userID);
 
-        } catch (Exception e) {
-            logger.error("Database error occurs when get: " + e.getMessage());
-        } finally {
-            if(session != null) {
-                close(session);
-            }
+        List<Menu> menuList = query.list();
+        if(menuList != null){
+            return menuList;
         }
-        return menuList;
+        return null;
     }
 }

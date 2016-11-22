@@ -93,8 +93,7 @@ public class UserRoleResource {
         JSONObject responseObj = new JSONObject();
 
         try{
-            UserRole userRole = userRoleService.getUserRoleByIdOrRoleID(userRoleID, null);
-            userRoleService.deleteUserRole(userRole);
+            userRoleService.deleteUserRole(userRoleID);
             logger.info("User role delete successfully.");
 
             responseObj.put(Constants.MESSAGE, "Delete user role success.");

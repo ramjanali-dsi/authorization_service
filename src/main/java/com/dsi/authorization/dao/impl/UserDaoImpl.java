@@ -1,141 +1,138 @@
 package com.dsi.authorization.dao.impl;
 
 import com.dsi.authorization.dao.UserDao;
+import com.dsi.authorization.exception.CustomException;
+import com.dsi.authorization.exception.ErrorContext;
+import com.dsi.authorization.exception.ErrorMessage;
 import com.dsi.authorization.model.System;
 import com.dsi.authorization.model.User;
-import org.apache.log4j.Logger;
+import com.dsi.authorization.service.impl.CommonService;
+import com.dsi.authorization.util.Constants;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
 /**
  * Created by sabbir on 6/24/16.
  */
-public class UserDaoImpl extends BaseDao implements UserDao {
+public class UserDaoImpl extends CommonService implements UserDao {
 
-    private static final Logger logger = Logger.getLogger(UserDaoImpl.class);
+    private Session session;
 
     @Override
-    public boolean saveUser(User user) {
-        return save(user);
+    public void setSession(Session session) {
+        this.session = session;
     }
 
     @Override
-    public boolean updateUser(User user) {
-        return update(user);
-    }
-
-    @Override
-    public boolean deleteUser(User user) {
-        return delete(user);
-    }
-
-    @Override
-    public boolean deleteUserSession(String userID) {
-        Session session = null;
-        boolean success = true;
+    public void saveUser(User user) throws CustomException {
         try {
-            session = getSession();
+            session.save(user);
+
+        } catch (Exception e){
+            close(session);
+            ErrorContext errorContext = new ErrorContext(null, "User", e.getMessage());
+            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0002,
+                    Constants.AUTHORIZATION_SERVICE_0002_DESCRIPTION, errorContext);
+            throw new CustomException(errorMessage);
+        }
+    }
+
+    @Override
+    public void updateUser(User user) throws CustomException {
+        try{
+            session.update(user);
+
+        } catch (Exception e){
+            close(session);
+            ErrorContext errorContext = new ErrorContext(null, "User", e.getMessage());
+            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0003,
+                    Constants.AUTHORIZATION_SERVICE_0003_DESCRIPTION, errorContext);
+            throw new CustomException(errorMessage);
+        }
+    }
+
+    @Override
+    public void deleteUser(User user) throws CustomException {
+        try {
+            session.delete(user);
+
+        } catch (Exception e){
+            close(session);
+            ErrorContext errorContext = new ErrorContext(null, "User", e.getMessage());
+            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0004,
+                    Constants.AUTHORIZATION_SERVICE_0004_DESCRIPTION, errorContext);
+            throw new CustomException(errorMessage);
+        }
+    }
+
+    @Override
+    public void deleteUserSession(String userID) throws CustomException {
+        try {
             Query query = session.createQuery("DELETE FROM UserSession us WHERE us.userId =:userID");
             query.setParameter("userID", userID);
 
-            success = query.executeUpdate() > 0;
+            query.executeUpdate();
 
-        } catch (Exception e) {
-            logger.error("Database error occurs when delete: " + e.getMessage());
-            success = false;
-
-        } finally {
-            if(session != null) {
-                close(session);
-            }
+        } catch (Exception e){
+            close(session);
+            ErrorContext errorContext = new ErrorContext(null, "UserSession", e.getMessage());
+            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0004,
+                    Constants.AUTHORIZATION_SERVICE_0004_DESCRIPTION, errorContext);
+            throw new CustomException(errorMessage);
         }
-        return success;
     }
 
     @Override
-    public boolean deleteUserRole(String userID) {
-        Session session = null;
-        boolean success = true;
+    public void deleteUserRole(String userID) throws CustomException {
         try {
-            session = getSession();
             Query query = session.createQuery("DELETE FROM UserRole ur WHERE ur.user.userId =:userID");
             query.setParameter("userID", userID);
 
-            success = query.executeUpdate() > 0;
+            query.executeUpdate();
 
-        } catch (Exception e) {
-            logger.error("Database error occurs when delete: " + e.getMessage());
-            success = false;
-
-        } finally {
-            if(session != null) {
-                close(session);
-            }
+        } catch (Exception e){
+            close(session);
+            ErrorContext errorContext = new ErrorContext(null, "UserRole", e.getMessage());
+            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0004,
+                    Constants.AUTHORIZATION_SERVICE_0004_DESCRIPTION, errorContext);
+            throw new CustomException(errorMessage);
         }
-        return success;
     }
 
     @Override
     public User getUserByID(String userID) {
-        Session session = null;
-        User user = null;
-        try {
-            session = getSession();
-            Query query = session.createQuery("FROM User u WHERE u.userId =:userID");
-            query.setParameter("userID", userID);
+        Query query = session.createQuery("FROM User u WHERE u.userId =:userID");
+        query.setParameter("userID", userID);
 
-            user = (User) query.uniqueResult();
-
-        } catch (Exception e) {
-            logger.error("Database error occurs when get: " + e.getMessage());
-        } finally {
-            if(session != null) {
-                close(session);
-            }
+        User user = (User) query.uniqueResult();
+        if(user != null) {
+            return user;
         }
-        return user;
+        return null;
     }
 
     @Override
     public User getUserByEmail(String email) {
-        Session session = null;
-        User user = null;
-        try {
-            session = getSession();
-            Query query = session.createQuery("FROM User u WHERE u.email =:email");
-            query.setParameter("email", email);
+        Query query = session.createQuery("FROM User u WHERE u.email =:email");
+        query.setParameter("email", email);
 
-            user = (User) query.uniqueResult();
-
-        } catch (Exception e) {
-            logger.error("Database error occurs when get: " + e.getMessage());
-        } finally {
-            if(session != null) {
-                close(session);
-            }
+        User user = (User) query.uniqueResult();
+        if(user != null) {
+            return user;
         }
-        return user;
+        return null;
     }
 
     @Override
     public System getSystemByUserID(String userID) {
-        Session session = null;
-        System system = null;
-        try {
-            session = getSession();
-            Query query = session.createQuery("FROM System s WHERE s.tenantId in " +
-                    "(SELECT u.tenantId FROM User u WHERE u.userId =:userID)");
-            query.setParameter("userID", userID);
+        Query query = session.createQuery("FROM System s WHERE s.tenantId in " +
+                "(SELECT u.tenantId FROM User u WHERE u.userId =:userID)");
+        query.setParameter("userID", userID);
 
-            system = (System) query.uniqueResult();
-
-        } catch (Exception e) {
-            logger.error("Database error occurs when get: " + e.getMessage());
-        } finally {
-            if(session != null) {
-                close(session);
-            }
+        System system = (System) query.uniqueResult();
+        if(system != null){
+            return system;
         }
-        return system;
+        return null;
     }
 }

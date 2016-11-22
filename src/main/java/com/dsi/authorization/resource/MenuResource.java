@@ -45,18 +45,12 @@ public class MenuResource {
             @ApiResponse(code = 500, message = "Read menus failed, unauthorized.")
     })
     public Response getAllMenus() throws CustomException {
+
         String userID = request.getAttribute("user_id") != null ?
                 request.getAttribute("user_id").toString() : null;
 
-        List<Menu> menuList = menuService.getAllMenus(userID);
-        logger.info("Menu list size: " + menuList.size());
+        logger.info("Read all menus by user id: " + userID);
 
-        for(Menu menu : menuList){
-            List<Menu> subMenu = menuService.getAllSubMenus(menu.getMenuId());
-            logger.info("Submenu list size of " + menu.getName() + ": " + subMenu.size());
-            menu.setSubMenuList(subMenu);
-        }
-
-        return Response.ok().entity(menuList).build();
+        return Response.ok().entity(menuService.getAllMenus(userID)).build();
     }
 }
