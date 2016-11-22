@@ -24,10 +24,18 @@ public class MenuServiceImpl extends CommonService implements MenuService {
 
     @Override
     public void saveMenu(Menu menu) throws CustomException {
+        validateInputForCreation(menu);
+
         Session session = getSession();
         menuDao.setSession(session);
 
-        validateInputForCreation(menu, session);
+        if(menuDao.getMenuByIdOrName(null, menu.getName()) != null){
+            close(session);
+            ErrorContext errorContext = new ErrorContext(menu.getName(), "Menu", "Menu already exist by this name.");
+            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0002,
+                    Constants.AUTHORIZATION_SERVICE_0002_DESCRIPTION, errorContext);
+            throw new CustomException(errorMessage);
+        }
 
         menuDao.saveMenu(menu);
         logger.info("Menu save success.");
@@ -35,20 +43,11 @@ public class MenuServiceImpl extends CommonService implements MenuService {
         close(session);
     }
 
-    private void validateInputForCreation(Menu menu, Session session) throws CustomException{
+    private void validateInputForCreation(Menu menu) throws CustomException{
         if(menu.getName() == null){
-            close(session);
             ErrorContext errorContext = new ErrorContext(null, "Menu", "Menu Name not defined.");
             ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0001,
                     Constants.AUTHORIZATION_SERVICE_0001_DESCRIPTION, errorContext);
-            throw new CustomException(errorMessage);
-        }
-
-        if(menuDao.getMenuByIdOrName(null, menu.getName()) != null){
-            close(session);
-            ErrorContext errorContext = new ErrorContext(menu.getName(), "Menu", "Menu already exist by this name.");
-            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0002,
-                    Constants.AUTHORIZATION_SERVICE_0002_DESCRIPTION, errorContext);
             throw new CustomException(errorMessage);
         }
     }

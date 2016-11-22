@@ -37,7 +37,21 @@ public class UserServiceImpl extends CommonService implements UserService {
         User currentUser = userDao.getUserByID(user.getCreateBy());
         user.setTenantId(currentUser.getTenantId());
 
-        validateInputForCreation(user, session);
+        if(user.getTenantId() == null){
+            close(session);
+            ErrorContext errorContext = new ErrorContext(null, "User", "TenantID not defined.");
+            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0001,
+                    Constants.AUTHORIZATION_SERVICE_0001_DESCRIPTION, errorContext);
+            throw new CustomException(errorMessage);
+        }
+
+        if(userDao.getUserByEmail(user.getEmail()) != null){
+            close(session);
+            ErrorContext errorContext = new ErrorContext(null, "User", "User already exist.");
+            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0002,
+                    Constants.AUTHORIZATION_SERVICE_0002_DESCRIPTION, errorContext);
+            throw new CustomException(errorMessage);
+        }
 
         user.setCreatedDate(Utility.today());
         user.setModifiedDate(Utility.today());
@@ -58,24 +72,6 @@ public class UserServiceImpl extends CommonService implements UserService {
         logger.info("User role create successfully.");
 
         close(session);
-    }
-
-    private void validateInputForCreation(User user, Session session) throws CustomException {
-        if(user.getTenantId() == null){
-            close(session);
-            ErrorContext errorContext = new ErrorContext(null, "User", "TenantID not defined.");
-            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0001,
-                    Constants.AUTHORIZATION_SERVICE_0001_DESCRIPTION, errorContext);
-            throw new CustomException(errorMessage);
-        }
-
-        if(userDao.getUserByEmail(user.getEmail()) != null){
-            close(session);
-            ErrorContext errorContext = new ErrorContext(null, "User", "User already exist.");
-            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0002,
-                    Constants.AUTHORIZATION_SERVICE_0002_DESCRIPTION, errorContext);
-            throw new CustomException(errorMessage);
-        }
     }
 
     @Override
