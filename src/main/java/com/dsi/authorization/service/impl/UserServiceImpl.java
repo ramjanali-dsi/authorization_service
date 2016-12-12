@@ -33,6 +33,8 @@ public class UserServiceImpl extends CommonService implements UserService {
     public void saveUser(User user) throws CustomException {
         Session session = getSession();
         userDao.setSession(session);
+        roleDao.setSession(session);
+        userRoleDao.setSession(session);
 
         User currentUser = userDao.getUserByID(user.getCreateBy());
         user.setTenantId(currentUser.getTenantId());
@@ -93,10 +95,11 @@ public class UserServiceImpl extends CommonService implements UserService {
         userDao.setSession(session);
 
         User user = userDao.getUserByID(userID);
-
-        userDao.deleteUserSession(user.getUserId());
-        userDao.deleteUserRole(user.getUserId());
-        userDao.deleteUser(user);
+        if(user != null) {
+            userDao.deleteUserSession(user.getUserId());
+            userDao.deleteUserRole(user.getUserId());
+            userDao.deleteUser(user);
+        }
 
         close(session);
     }

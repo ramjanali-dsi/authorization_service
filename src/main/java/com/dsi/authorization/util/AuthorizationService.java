@@ -11,7 +11,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 public class AuthorizationService extends ResourceConfig {
 
     public AuthorizationService(){
-        packages(UserResource.class.getPackage().getName());
+        packages("com.dsi.authorization");
         register(ResponseCORSFilter.class);
         register(CheckAuthorizationFilter.class);
 
