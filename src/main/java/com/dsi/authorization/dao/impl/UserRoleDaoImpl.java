@@ -4,6 +4,7 @@ import com.dsi.authorization.dao.UserRoleDao;
 import com.dsi.authorization.exception.CustomException;
 import com.dsi.authorization.exception.ErrorContext;
 import com.dsi.authorization.exception.ErrorMessage;
+import com.dsi.authorization.model.RoleName;
 import com.dsi.authorization.model.UserRole;
 import com.dsi.authorization.service.impl.CommonService;
 import com.dsi.authorization.util.Constants;
@@ -109,6 +110,26 @@ public class UserRoleDaoImpl extends CommonService implements UserRoleDao {
         UserRole userRole = (UserRole) query.uniqueResult();
         if(userRole != null) {
             return userRole;
+        }
+        return null;
+    }
+
+    @Override
+    public List<UserRole> getAllUserByRole(String roleType) {
+        Query query;
+        if(roleType != null) {
+            query = session.createQuery("FROM UserRole ur WHERE ur.role.name =:roleName");
+            query.setParameter("roleName", roleType);
+
+        } else {
+            query = session.createQuery("FROM UserRole ur WHERE ur.role.name =:roleType1 Or ur.role.name =:roleType2");
+            query.setParameter("roleType1", RoleName.LEAD.getValue());
+            query.setParameter("roleType2", RoleName.MEMBER.getValue());
+        }
+
+        List<UserRole> userRoleList = query.list();
+        if(userRoleList != null){
+            return userRoleList;
         }
         return null;
     }

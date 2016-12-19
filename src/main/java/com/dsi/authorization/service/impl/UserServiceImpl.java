@@ -6,6 +6,7 @@ import com.dsi.authorization.dao.UserRoleDao;
 import com.dsi.authorization.dao.impl.RoleDaoImpl;
 import com.dsi.authorization.dao.impl.UserDaoImpl;
 import com.dsi.authorization.dao.impl.UserRoleDaoImpl;
+import com.dsi.authorization.dto.UserDto;
 import com.dsi.authorization.exception.CustomException;
 import com.dsi.authorization.exception.ErrorContext;
 import com.dsi.authorization.exception.ErrorMessage;
@@ -17,6 +18,9 @@ import com.dsi.authorization.util.Constants;
 import com.dsi.authorization.util.Utility;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by sabbir on 6/24/16.
@@ -120,6 +124,35 @@ public class UserServiceImpl extends CommonService implements UserService {
 
         close(session);
         return user;
+    }
+
+    @Override
+    public List<UserDto> getAllUserByRole(String roleType) throws CustomException {
+
+        Session session = getSession();
+        userRoleDao.setSession(session);
+
+        List<UserRole> userRoleList = userRoleDao.getAllUserByRole(roleType);
+        if(userRoleList == null){
+            close(session);
+            ErrorContext errorContext = new ErrorContext(null, "UserRole", "User role list not found by roleType: " + roleType);
+            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0005,
+                    Constants.AUTHORIZATION_SERVICE_0005_DESCRIPTION, errorContext);
+            throw new CustomException(errorMessage);
+        }
+        logger.info("User role list size: " + userRoleList.size());
+
+        List<UserDto> userDtoList = new ArrayList<>();
+        for(UserRole userRole : userRoleList){
+            UserDto userDto = new UserDto();
+            userDto.setUserId(userRole.getUser().getUserId());
+            userDto.setFirstName(userRole.getUser().getFirstName());
+            userDto.setLastName(userRole.getUser().getLastName());
+
+            userDtoList.add(userDto);
+        }
+
+        return userDtoList;
     }
 
     @Override

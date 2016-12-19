@@ -5,6 +5,8 @@ import com.dsi.authorization.model.System;
 import com.dsi.authorization.model.User;
 import org.hibernate.Session;
 
+import java.util.List;
+
 /**
  * Created by sabbir on 6/24/16.
  */

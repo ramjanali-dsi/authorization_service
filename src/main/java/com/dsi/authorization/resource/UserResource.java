@@ -16,7 +16,9 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -33,6 +35,9 @@ public class UserResource {
     private static final Logger logger = Logger.getLogger(UserResource.class);
 
     private static final UserService userService = new UserServiceImpl();
+
+    @Context
+    HttpServletRequest request;
 
     @POST
     @ApiOperation(value = "User Create With Role / Without Role", notes = "User Create With Role / Without Role", position = 1)
@@ -109,5 +114,16 @@ public class UserResource {
                     Constants.AUTHORIZATION_SERVICE_0009_DESCRIPTION, errorContext);
             throw new CustomException(errorMessage);
         }
+    }
+
+    @GET
+    @ApiOperation(value = "Read All User", notes = "Read All User", position = 4)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Read all user success"),
+            @ApiResponse(code = 500, message = "Read all user failed, unauthorized.")
+    })
+    public Response readAllUserByRole(@QueryParam("type") String type) throws CustomException {
+
+        return Response.ok().entity(userService.getAllUserByRole(type)).build();
     }
 }
