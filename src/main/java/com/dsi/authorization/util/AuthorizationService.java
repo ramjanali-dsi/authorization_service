@@ -13,7 +13,7 @@ public class AuthorizationService extends ResourceConfig {
     public AuthorizationService(){
         packages("com.dsi.authorization");
         register(ResponseCORSFilter.class);
-        //register(CheckAuthorizationFilter.class);
+        register(CheckAuthorizationFilter.class);
 
         SessionUtil.getSession();
     }
