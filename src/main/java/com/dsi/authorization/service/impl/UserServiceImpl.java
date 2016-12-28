@@ -156,6 +156,30 @@ public class UserServiceImpl extends CommonService implements UserService {
     }
 
     @Override
+    public List<String> getUsersByRoleType(String roleType) throws CustomException {
+        Session session = getSession();
+        userRoleDao.setSession(session);
+
+        List<UserRole> userRoleList = userRoleDao.getAllUserByRole(roleType);
+        if(userRoleList == null){
+            close(session);
+            ErrorContext errorContext = new ErrorContext(null, null,
+                    "User role list not found by roleType: " + roleType);
+            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0005,
+                    Constants.AUTHORIZATION_SERVICE_0005_DESCRIPTION, errorContext);
+            throw new CustomException(errorMessage);
+        }
+        logger.info("User role list size: " + userRoleList.size());
+
+        List<String> userEmails = new ArrayList<>();
+        for(UserRole userRole : userRoleList){
+            userEmails.add(userRole.getUser().getEmail());
+        }
+
+        return userEmails;
+    }
+
+    @Override
     public System getSystemByUserID(String userID) throws CustomException {
         Session session = getSession();
         userDao.setSession(session);
