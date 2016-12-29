@@ -156,15 +156,15 @@ public class UserServiceImpl extends CommonService implements UserService {
     }
 
     @Override
-    public List<String> getUsersByRoleType(String roleType) throws CustomException {
+    public List<String> getUsersByRoleType() throws CustomException {
         Session session = getSession();
         userRoleDao.setSession(session);
 
-        List<UserRole> userRoleList = userRoleDao.getAllUserByRole(roleType);
+        List<UserRole> userRoleList = userRoleDao.getAllUserByRole();
         if(userRoleList == null){
             close(session);
             ErrorContext errorContext = new ErrorContext(null, null,
-                    "User role list not found by roleType: " + roleType);
+                    "User role list not found by HR & Manager RoleType");
             ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0005,
                     Constants.AUTHORIZATION_SERVICE_0005_DESCRIPTION, errorContext);
             throw new CustomException(errorMessage);

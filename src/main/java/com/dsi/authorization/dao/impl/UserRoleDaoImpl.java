@@ -135,6 +135,19 @@ public class UserRoleDaoImpl extends CommonService implements UserRoleDao {
     }
 
     @Override
+    public List<UserRole> getAllUserByRole() {
+        Query query = session.createQuery("FROM UserRole ur WHERE ur.role.name =:roleName1 or ur.role.name =:roleName2");
+        query.setParameter("roleName1", RoleName.HR.getValue());
+        query.setParameter("roleName2", RoleName.MANAGER.getValue());
+
+        List<UserRole> userRoleList = query.list();
+        if(userRoleList != null){
+            return userRoleList;
+        }
+        return null;
+    }
+
+    @Override
     public List<UserRole> getUserRoleListBySystemID(String systemID) {
         Query query = session.createQuery("FROM UserRole ur WHERE ur.system.id =:systemID");
         query.setParameter("systemID", systemID);

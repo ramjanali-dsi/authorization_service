@@ -20,5 +20,6 @@ public interface UserRoleDao {
             (String userID, String systemID, String roleID);
     UserRole getUserRoleByUserID(String userID);
     List<UserRole> getAllUserByRole(String roleType);
+    List<UserRole> getAllUserByRole();
     List<UserRole> getUserRoleListBySystemID(String systemID);
 }

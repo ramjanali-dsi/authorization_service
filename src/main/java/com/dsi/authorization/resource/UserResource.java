@@ -134,8 +134,8 @@ public class UserResource {
             @ApiResponse(code = 200, message = "Read all user success"),
             @ApiResponse(code = 500, message = "Read all user failed, unauthorized.")
     })
-    public Response readUserByRoleType(@QueryParam("type") String type) throws CustomException {
+    public Response readUserByRole() throws CustomException {
 
-        return Response.ok().entity(userService.getUsersByRoleType(type)).build();
+        return Response.ok().entity(userService.getUsersByRoleType()).build();
     }
 }
