@@ -10,6 +10,7 @@ import com.dsi.authorization.dto.UserDto;
 import com.dsi.authorization.exception.CustomException;
 import com.dsi.authorization.exception.ErrorContext;
 import com.dsi.authorization.exception.ErrorMessage;
+import com.dsi.authorization.model.RoleName;
 import com.dsi.authorization.model.System;
 import com.dsi.authorization.model.User;
 import com.dsi.authorization.model.UserRole;
@@ -17,6 +18,9 @@ import com.dsi.authorization.service.UserService;
 import com.dsi.authorization.util.Constants;
 import com.dsi.authorization.util.Utility;
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Session;
 
 import java.util.ArrayList;
@@ -156,27 +160,54 @@ public class UserServiceImpl extends CommonService implements UserService {
     }
 
     @Override
-    public List<String> getUsersByRoleType() throws CustomException {
+    public String getUsersByRoleType() throws CustomException {
         Session session = getSession();
         userRoleDao.setSession(session);
 
-        List<UserRole> userRoleList = userRoleDao.getAllUserByRole();
-        if(userRoleList == null){
-            close(session);
-            ErrorContext errorContext = new ErrorContext(null, null,
-                    "User role list not found by HR & Manager RoleType");
-            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0005,
-                    Constants.AUTHORIZATION_SERVICE_0005_DESCRIPTION, errorContext);
+        JSONObject roleObj = new JSONObject();
+        JSONArray emailArray;
+        try {
+            List<UserRole> userRoleList = userRoleDao.getAllUserByRole(RoleName.HR.getValue());
+            if (userRoleList == null) {
+                close(session);
+                ErrorContext errorContext = new ErrorContext(null, null,
+                        "User role list not found by HR RoleType");
+                ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0005,
+                        Constants.AUTHORIZATION_SERVICE_0005_DESCRIPTION, errorContext);
+                throw new CustomException(errorMessage);
+            }
+            logger.info("HR role list size: " + userRoleList.size());
+
+            emailArray = new JSONArray();
+            for (UserRole userRole : userRoleList) {
+                emailArray.put(userRole.getUser().getEmail());
+            }
+            roleObj.put(RoleName.HR.getValue(), emailArray);
+
+            userRoleList = userRoleDao.getAllUserByRole(RoleName.MANAGER.getValue());
+            if (userRoleList == null) {
+                close(session);
+                ErrorContext errorContext = new ErrorContext(null, null,
+                        "User role list not found by Manager RoleType");
+                ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0005,
+                        Constants.AUTHORIZATION_SERVICE_0005_DESCRIPTION, errorContext);
+                throw new CustomException(errorMessage);
+            }
+            logger.info("Manager role list size: " + userRoleList.size());
+
+            emailArray = new JSONArray();
+            for(UserRole userRole : userRoleList){
+                emailArray.put(userRole.getUser().getEmail());
+            }
+            roleObj.put(RoleName.MANAGER.getValue(), emailArray);
+
+        } catch (JSONException je){
+            ErrorContext errorContext = new ErrorContext(null, null, je.getMessage());
+            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0009,
+                    Constants.AUTHORIZATION_SERVICE_0009_DESCRIPTION, errorContext);
             throw new CustomException(errorMessage);
         }
-        logger.info("User role list size: " + userRoleList.size());
-
-        List<String> userEmails = new ArrayList<>();
-        for(UserRole userRole : userRoleList){
-            userEmails.add(userRole.getUser().getEmail());
-        }
-
-        return userEmails;
+        return roleObj.toString();
     }
 
     @Override

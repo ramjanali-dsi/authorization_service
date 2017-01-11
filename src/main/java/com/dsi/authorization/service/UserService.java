@@ -17,6 +17,6 @@ public interface UserService {
     void deleteUser(String userID) throws CustomException;
     User getUserByID(String userID) throws CustomException;
     List<UserDto> getAllUserByRole(String roleType) throws CustomException;
-    List<String> getUsersByRoleType() throws CustomException;
+    String getUsersByRoleType() throws CustomException;
     System getSystemByUserID(String userID) throws CustomException;
 }

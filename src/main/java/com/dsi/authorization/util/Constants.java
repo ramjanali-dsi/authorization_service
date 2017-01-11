@@ -11,6 +11,7 @@ public class Constants {
     public static final String SYSTEM_ID = "0759a760-b9df-4c8a-8a64-fa31f256d13b";
     
     public static final String MESSAGE = "message";
+    public static final String TENANT_ID = "tenant_id";
 
     // Error Code
     public static final String AUTHORIZATION_SERVICE_0001 = "authorization_service_0001";
