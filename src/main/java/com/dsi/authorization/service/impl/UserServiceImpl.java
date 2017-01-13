@@ -156,6 +156,7 @@ public class UserServiceImpl extends CommonService implements UserService {
             userDtoList.add(userDto);
         }
 
+        close(session);
         return userDtoList;
     }
 
@@ -201,13 +202,16 @@ public class UserServiceImpl extends CommonService implements UserService {
             }
             roleObj.put(RoleName.MANAGER.getValue(), emailArray);
 
+            close(session);
+            return roleObj.toString();
+
         } catch (JSONException je){
+            close(session);
             ErrorContext errorContext = new ErrorContext(null, null, je.getMessage());
             ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0009,
                     Constants.AUTHORIZATION_SERVICE_0009_DESCRIPTION, errorContext);
             throw new CustomException(errorMessage);
         }
-        return roleObj.toString();
     }
 
     @Override
