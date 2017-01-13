@@ -87,12 +87,32 @@ public class UserServiceImpl extends CommonService implements UserService {
     @Override
     public void updateUser(User user) throws CustomException {
         Session session = getSession();
+        roleDao.setSession(session);
         userDao.setSession(session);
+        userRoleDao.setSession(session);
 
-        user.setCreatedDate(Utility.today());
-        user.setModifiedDate(Utility.today());
+        User existUser = userDao.getUserByID(user.getUserId());
+        if(existUser != null) {
+            existUser.setFirstName(user.getFirstName());
+            existUser.setLastName(user.getLastName());
+            existUser.setGender(user.getGender());
+            existUser.setPhone(user.getPhone());
+            existUser.setModifiedBy(user.getModifiedBy());
+            existUser.setModifiedDate(Utility.today());
+            userDao.updateUser(existUser);
+            logger.info("User update success.");
 
-        userDao.updateUser(user);
+            if(user.getRoleId() != null) {
+                UserRole existRole = userRoleDao.getUserRoleByUserID(user.getUserId());
+                if (existRole != null) {
+                    existRole.setModifiedBy(user.getModifiedBy());
+                    existRole.setModifiedDate(Utility.today());
+                    existRole.setRole(roleDao.getRoleByID(user.getRoleId()));
+                    userRoleDao.updateUserRole(existRole);
+                    logger.info("User role update success.");
+                }
+            }
+        }
 
         close(session);
     }

@@ -68,15 +68,17 @@ public class UserResource {
     }
 
     @PUT
+    @Path("/{user_id}")
     @ApiOperation(value = "User Update", notes = "User Update", position = 2)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "User update success"),
             @ApiResponse(code = 500, message = "User update failed, unauthorized.")
     })
-    public Response updateUser(User user) throws CustomException {
+    public Response updateUser(@PathParam("user_id") String userId, User user) throws CustomException {
         JSONObject responseObj = new JSONObject();
 
         try{
+            user.setUserId(userId);
             userService.updateUser(user);
             logger.info("User update successfully.");
 
