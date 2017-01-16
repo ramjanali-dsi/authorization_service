@@ -4,6 +4,7 @@ import com.dsi.authorization.exception.CustomException;
 import com.dsi.authorization.exception.ErrorContext;
 import com.dsi.authorization.exception.ErrorMessage;
 import com.dsi.authorization.model.User;
+import com.dsi.authorization.model.UserRole;
 import com.dsi.authorization.service.UserService;
 import com.dsi.authorization.service.impl.UserServiceImpl;
 import com.dsi.authorization.util.Constants;
@@ -52,10 +53,11 @@ public class UserResource {
             logger.info("Request body: " + new Gson().toJson(user));
 
             logger.info("User create:: Start");
-            userService.saveUser(user);
+            UserRole userRole = userService.saveUser(user);
             logger.info("User create:: End");
 
-            responseObj.put("user_id", user.getUserId());
+            responseObj.put("user_id", userRole.getUser().getUserId());
+            responseObj.put("role_name", userRole.getRole().getName());
             responseObj.put(Constants.MESSAGE, "Create user success.");
             return Response.ok().entity(responseObj.toString()).build();
 
@@ -130,8 +132,20 @@ public class UserResource {
     }
 
     @GET
+    @Path("/{user_id}")
+    @ApiOperation(value = "Read User", notes = "Read User", position = 5)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Read user success"),
+            @ApiResponse(code = 500, message = "Read user failed, unauthorized.")
+    })
+    public Response readUser(@PathParam("user_id") String userId) throws CustomException {
+
+        return Response.ok().entity(userService.getUserByID(userId)).build();
+    }
+
+    @GET
     @Path("/role")
-    @ApiOperation(value = "Read All User", notes = "Read All User", position = 5)
+    @ApiOperation(value = "Read All User", notes = "Read All User", position = 6)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Read all user success"),
             @ApiResponse(code = 500, message = "Read all user failed, unauthorized.")

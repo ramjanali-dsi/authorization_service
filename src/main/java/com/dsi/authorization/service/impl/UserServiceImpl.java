@@ -38,7 +38,7 @@ public class UserServiceImpl extends CommonService implements UserService {
     private static final UserRoleDao userRoleDao = new UserRoleDaoImpl();
 
     @Override
-    public void saveUser(User user) throws CustomException {
+    public UserRole saveUser(User user) throws CustomException {
         Session session = getSession();
         userDao.setSession(session);
         roleDao.setSession(session);
@@ -82,6 +82,7 @@ public class UserServiceImpl extends CommonService implements UserService {
         logger.info("User role create successfully.");
 
         close(session);
+        return userRole;
     }
 
     @Override
@@ -133,18 +134,27 @@ public class UserServiceImpl extends CommonService implements UserService {
     }
 
     @Override
-    public User getUserByID(String userID) throws CustomException {
+    public UserDto getUserByID(String userID) throws CustomException {
         Session session = getSession();
-        userDao.setSession(session);
+        userRoleDao.setSession(session);
 
-        User user = userDao.getUserByID(userID);
-        if (user == null) {
+        UserRole userRole = userRoleDao.getUserRoleByUserID(userID);
+        if (userRole == null) {
             close(session);
-            ErrorContext errorContext = new ErrorContext(userID, "User", "User not found by userID: " + userID);
+            ErrorContext errorContext = new ErrorContext(userID, "UserRole",
+                    "UserRole not found by userID: " + userID);
             ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0005,
                     Constants.AUTHORIZATION_SERVICE_0005_DESCRIPTION, errorContext);
             throw new CustomException(errorMessage);
         }
+
+        UserDto user = new UserDto();
+        user.setUserId(userID);
+        user.setFirstName(userRole.getUser().getFirstName());
+        user.setLastName(userRole.getUser().getLastName());
+        user.setRoleId(userRole.getRole().getRoleId());
+        user.setRoleName(userRole.getRole().getName());
+        user.setMessage("User role info.");
 
         close(session);
         return user;

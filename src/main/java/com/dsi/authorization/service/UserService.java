@@ -4,6 +4,7 @@ import com.dsi.authorization.dto.UserDto;
 import com.dsi.authorization.exception.CustomException;
 import com.dsi.authorization.model.System;
 import com.dsi.authorization.model.User;
+import com.dsi.authorization.model.UserRole;
 
 import java.util.List;
 
@@ -12,10 +13,10 @@ import java.util.List;
  */
 public interface UserService {
 
-    void saveUser(User user) throws CustomException;
+    UserRole saveUser(User user) throws CustomException;
     void updateUser(User user) throws CustomException;
     void deleteUser(String userID) throws CustomException;
-    User getUserByID(String userID) throws CustomException;
+    UserDto getUserByID(String userID) throws CustomException;
     List<UserDto> getAllUserByRole(String roleType) throws CustomException;
     String getUsersByRoleType() throws CustomException;
     System getSystemByUserID(String userID) throws CustomException;

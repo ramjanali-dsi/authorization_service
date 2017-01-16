@@ -11,6 +11,12 @@ public class UserDto {
 
     private String lastName;
 
+    private String roleId;
+
+    private String roleName;
+
+    private String message;
+
     public String getUserId() {
         return userId;
     }
@@ -33,5 +39,29 @@ public class UserDto {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(String roleId) {
+        this.roleId = roleId;
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }
