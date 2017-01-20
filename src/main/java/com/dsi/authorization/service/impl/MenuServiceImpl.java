@@ -8,6 +8,7 @@ import com.dsi.authorization.exception.ErrorMessage;
 import com.dsi.authorization.model.Menu;
 import com.dsi.authorization.service.MenuService;
 import com.dsi.authorization.util.Constants;
+import com.dsi.authorization.util.Utility;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 
@@ -88,14 +89,22 @@ public class MenuServiceImpl extends CommonService implements MenuService {
             throw new CustomException(errorMessage);
         }
         logger.info("Menu list size: " + menuList.size());
-
-        for(Menu menu : menuList) {
-            List<Menu> subMenuList = menuDao.getAllSubMenus(menu.getMenuId());
-            logger.info("Sub menu list size: " + subMenuList.size());
-            menu.setSubMenuList(subMenuList);
-        }
+        recursiveMenuList(menuList);
 
         close(session);
         return menuList;
+    }
+
+    private void recursiveMenuList(List<Menu> menuList) {
+        if(Utility.isNullOrEmpty(menuList)){
+            return;
+        }
+
+        for(Menu menu : menuList){
+            List<Menu> subMenuList = menuDao.getAllSubMenus(menu.getMenuId());
+            logger.info("Sub menu list size: " + subMenuList.size());
+            menu.setSubMenuList(subMenuList);
+            recursiveMenuList(subMenuList);
+        }
     }
 }
