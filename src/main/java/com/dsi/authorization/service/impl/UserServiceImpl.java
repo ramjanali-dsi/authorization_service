@@ -6,14 +6,13 @@ import com.dsi.authorization.dao.UserRoleDao;
 import com.dsi.authorization.dao.impl.RoleDaoImpl;
 import com.dsi.authorization.dao.impl.UserDaoImpl;
 import com.dsi.authorization.dao.impl.UserRoleDaoImpl;
+import com.dsi.authorization.dto.UserContextDto;
 import com.dsi.authorization.dto.UserDto;
 import com.dsi.authorization.exception.CustomException;
 import com.dsi.authorization.exception.ErrorContext;
 import com.dsi.authorization.exception.ErrorMessage;
-import com.dsi.authorization.model.RoleName;
+import com.dsi.authorization.model.*;
 import com.dsi.authorization.model.System;
-import com.dsi.authorization.model.User;
-import com.dsi.authorization.model.UserRole;
 import com.dsi.authorization.service.UserService;
 import com.dsi.authorization.util.Constants;
 import com.dsi.authorization.util.Utility;
@@ -245,6 +244,89 @@ public class UserServiceImpl extends CommonService implements UserService {
     }
 
     @Override
+    public void saveOrUpdateUserContext(List<UserContextDto> userContextDtoList) throws CustomException {
+
+        if(Utility.isNullOrEmpty(userContextDtoList)){
+            ErrorContext errorContext = new ErrorContext(null, "UserContext", "User Context list is empty.");
+            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0001,
+                    Constants.AUTHORIZATION_SERVICE_0001_DESCRIPTION, errorContext);
+            throw new CustomException(errorMessage);
+        }
+
+        Session session = getSession();
+        userDao.setSession(session);
+
+        UserContext userContext;
+        try {
+            for (UserContextDto userContextDto : userContextDtoList) {
+
+                userContext = new UserContext();
+                User user = userDao.getUserByID(userContextDto.getUserId());
+                UserContext existContext = userDao.getUserContextByUserId(userContextDto.getUserId());
+
+                if (userContextDto.getActivity() == 1) {
+                    logger.info("Context create state.");
+                    if (existContext == null) {
+                        userContext.setContext(getContextObj(userContextDto.getTeamId()));
+                        userContext.setUser(user);
+                        userContext.setVersion(1);
+                        userDao.saveUserContext(userContext);
+                        logger.info("User context save success.");
+
+                    } else {
+                        logger.info("User context already exist.");
+                        existContext.setContext(getContextObjFromExist(userContextDto.getTeamId(),
+                                existContext.getContext()));
+                        userDao.updateUserContext(existContext);
+                        logger.info("User context update success.");
+                    }
+
+                } else if (userContextDto.getActivity() == 2) {
+                    logger.info("Context update state.");
+
+                    if(existContext != null){
+                        String context = getContextObjAfterRemove(existContext.getContext(), userContextDto.getTeamId());
+                        if(context == null){
+                            userDao.deleteUserContext(existContext.getUserContextId());
+                            logger.info("Delete user context.");
+
+                        } else {
+                            existContext.setContext(context);
+                            userDao.updateUserContext(existContext);
+                            logger.info("Update user context.");
+                        }
+                    }
+                }
+            }
+            close(session);
+
+        } catch (JSONException je){
+            close(session);
+            ErrorContext errorContext = new ErrorContext(null, null, je.getMessage());
+            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0009,
+                    Constants.AUTHORIZATION_SERVICE_0009_DESCRIPTION, errorContext);
+            throw new CustomException(errorMessage);
+        }
+    }
+
+    @Override
+    public UserContext getUserContextByUserId(String userId) {
+        logger.info("Read user context by user id: " + userId);
+
+        Session session = getSession();
+        userDao.setSession(session);
+
+        UserContext userContext = userDao.getUserContextByUserId(userId);
+        if(userContext == null){
+            close(session);
+            return null;
+        }
+
+        close(session);
+        return userContext;
+    }
+
+    @Override
     public System getSystemByUserID(String userID) throws CustomException {
         Session session = getSession();
         userDao.setSession(session);
@@ -260,5 +342,41 @@ public class UserServiceImpl extends CommonService implements UserService {
 
         close(session);
         return system;
+    }
+
+    private String getContextObj(String teamId) throws JSONException {
+        JSONArray contextArray = new JSONArray();
+        contextArray.put(teamId);
+
+        JSONObject contextObj = new JSONObject();
+        contextObj.put("team", contextArray);
+
+        return contextObj.toString();
+    }
+
+    private String getContextObjFromExist(String teamId, String context) throws JSONException {
+        JSONObject existContextObj = new JSONObject(context);
+        JSONArray existContextArray = existContextObj.getJSONArray("team");
+        existContextArray.put(teamId);
+
+        JSONObject contextObj = new JSONObject();
+        contextObj.put("team", existContextArray);
+
+        return contextObj.toString();
+    }
+
+    private String getContextObjAfterRemove(String context, String teamId) throws JSONException {
+        JSONObject contextObj = new JSONObject(context);
+        JSONArray contextArray = contextObj.getJSONArray("team");
+        contextArray.remove(teamId);
+
+        if(contextArray.length() > 0){
+            contextObj = new JSONObject();
+            contextObj.put("team", contextArray);
+
+            return contextObj.toString();
+        }
+
+        return null;
     }
 }

@@ -158,12 +158,6 @@
             <version>1.0</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.dsi.httpclient</groupId>
-            <artifactId>dsi-httpclient</artifactId>
-            <version>1.0</version>
-        </dependency>
-
         <!--GSON Object-->
         <dependency>
             <groupId>com.google.code.gson</groupId>

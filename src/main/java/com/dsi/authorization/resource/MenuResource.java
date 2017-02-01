@@ -1,15 +1,12 @@
 package com.dsi.authorization.resource;
 
 import com.dsi.authorization.exception.CustomException;
-import com.dsi.authorization.model.Menu;
 import com.dsi.authorization.service.MenuService;
 import com.dsi.authorization.service.impl.MenuServiceImpl;
-import com.dsi.authorization.util.Utility;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
-import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -19,7 +16,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.List;
 
 /**
  * Created by sabbir on 8/10/16.
@@ -30,8 +26,6 @@ import java.util.List;
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON})
 public class MenuResource {
-
-    private static final Logger logger = Logger.getLogger(MenuResource.class);
 
     private static final MenuService menuService = new MenuServiceImpl();
 
@@ -49,8 +43,7 @@ public class MenuResource {
         String userID = request.getAttribute("user_id") != null ?
                 request.getAttribute("user_id").toString() : null;
 
-        logger.info("Read all menus by user id: " + userID);
-
+        //return Response.ok().entity(menuService.getAllMenusAndApiPermission(userID)).build();
         return Response.ok().entity(menuService.getAllMenus(userID)).build();
     }
 }

@@ -6,6 +6,7 @@ import com.dsi.authorization.exception.ErrorContext;
 import com.dsi.authorization.exception.ErrorMessage;
 import com.dsi.authorization.model.System;
 import com.dsi.authorization.model.User;
+import com.dsi.authorization.model.UserContext;
 import com.dsi.authorization.service.impl.CommonService;
 import com.dsi.authorization.util.Constants;
 import org.hibernate.Query;
@@ -119,6 +120,63 @@ public class UserDaoImpl extends CommonService implements UserDao {
         User user = (User) query.uniqueResult();
         if(user != null) {
             return user;
+        }
+        return null;
+    }
+
+    @Override
+    public void saveUserContext(UserContext userContext) throws CustomException {
+        try {
+            session.save(userContext);
+
+        } catch (Exception e){
+            close(session);
+            ErrorContext errorContext = new ErrorContext(null, "UserContext", e.getMessage());
+            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0002,
+                    Constants.AUTHORIZATION_SERVICE_0002_DESCRIPTION, errorContext);
+            throw new CustomException(errorMessage);
+        }
+    }
+
+    @Override
+    public void updateUserContext(UserContext userContext) throws CustomException {
+        try{
+            session.update(userContext);
+
+        } catch (Exception e){
+            close(session);
+            ErrorContext errorContext = new ErrorContext(null, "UserContext", e.getMessage());
+            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0003,
+                    Constants.AUTHORIZATION_SERVICE_0003_DESCRIPTION, errorContext);
+            throw new CustomException(errorMessage);
+        }
+    }
+
+    @Override
+    public void deleteUserContext(String id) throws CustomException {
+        try {
+            Query query = session.createQuery("DELETE FROM UserContext uc WHERE uc.userContextId =:id");
+            query.setParameter("id", id);
+
+            query.executeUpdate();
+
+        } catch (Exception e){
+            close(session);
+            ErrorContext errorContext = new ErrorContext(null, "UserContext", e.getMessage());
+            ErrorMessage errorMessage = new ErrorMessage(Constants.AUTHORIZATION_SERVICE_0004,
+                    Constants.AUTHORIZATION_SERVICE_0004_DESCRIPTION, errorContext);
+            throw new CustomException(errorMessage);
+        }
+    }
+
+    @Override
+    public UserContext getUserContextByUserId(String userId) {
+        Query query = session.createQuery("FROM UserContext uc WHERE uc.user.userId =:userId");
+        query.setParameter("userId", userId);
+
+        UserContext userContext = (UserContext) query.uniqueResult();
+        if(userContext != null){
+            return userContext;
         }
         return null;
     }

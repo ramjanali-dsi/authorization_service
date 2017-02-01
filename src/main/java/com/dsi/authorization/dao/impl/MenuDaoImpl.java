@@ -4,6 +4,7 @@ import com.dsi.authorization.dao.MenuDao;
 import com.dsi.authorization.exception.CustomException;
 import com.dsi.authorization.exception.ErrorContext;
 import com.dsi.authorization.exception.ErrorMessage;
+import com.dsi.authorization.model.Api;
 import com.dsi.authorization.model.Menu;
 import com.dsi.authorization.service.impl.CommonService;
 import com.dsi.authorization.util.Constants;
@@ -108,6 +109,20 @@ public class MenuDaoImpl extends CommonService implements MenuDao {
         List<Menu> menuList = query.list();
         if(menuList != null){
             return menuList;
+        }
+        return null;
+    }
+
+    @Override
+    public List<Api> getAllAPIByRole(String userId) {
+        Query query = session.createQuery("FROM Api a WHERE a.apiId in (SELECT ma.api.apiId FROM MenuApi ma WHERE ma.menu.menuId in " +
+                "(SELECT rm.menu.menuId FROM RoleMenu rm WHERE rm.role.roleId in " +
+                "(SELECT ur.role.roleId FROM UserRole ur WHERE ur.user.userId =:userId)))");
+        query.setParameter("userId", userId);
+
+        List<Api> apiList = query.list();
+        if(apiList != null){
+            return apiList;
         }
         return null;
     }

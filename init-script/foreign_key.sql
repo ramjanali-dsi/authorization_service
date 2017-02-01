@@ -21,3 +21,5 @@ alter table dsi_user_role add constraint FK_userRoleRoleId foreign key (role_id)
 alter table dsi_user_role add constraint FK_userRoleSystemId foreign key (system_id) references dsi_system (system_id);
 
 alter table dsi_user_role add constraint FK_userRoleUserId foreign key (user_id) references dsi_user (user_id);
+
+alter table dsi_user_context add index FK34C94FA013068535 (user_id), add constraint FK34C94FA013068535 foreign key (user_id) references dsi_user (user_id);

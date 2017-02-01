@@ -21,6 +21,8 @@ public class Api {
 
     private String url;
 
+    private String method;
+
     @ManyToOne
     @JoinColumn(name = "system_id", nullable = false)
     private System system;
@@ -60,6 +62,14 @@ public class Api {
 
     public void setActive(boolean active) {
         isActive = active;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
     }
 
     public int getVersion() {

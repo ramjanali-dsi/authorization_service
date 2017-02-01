@@ -19,4 +19,6 @@ create table dsi_user_role (user_role_id varchar(40) not null, created_by varcha
 create table dsi_user_session (user_session_id varchar(40) not null, access_token text, created_by varchar(40) not null,
 created_date datetime, modified_by varchar(40) not null, modified_date datetime, user_id varchar(40) not null, version integer not null, primary key (user_session_id));
 
+create table dsi_user_context (user_context_id varchar(40) not null, context TEXT, version integer not null, user_id varchar(40), primary key (user_context_id));
+
 

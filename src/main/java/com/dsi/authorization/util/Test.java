@@ -14,6 +14,7 @@ public class Test {
 
     public static void main(String [] args) throws CustomException {
         MenuService menuService = new MenuServiceImpl();
-        System.out.println(new Gson().toJson(menuService.getAllMenus("f9e9a19f-4859-4e8c-a8f4-dc134629a57b")));
+        System.out.println(new Gson().toJson(menuService.
+                getAllMenusAndApiPermission("e4c23852-3a7a-447c-a6a0-ae370e7f041a")));
     }
 }

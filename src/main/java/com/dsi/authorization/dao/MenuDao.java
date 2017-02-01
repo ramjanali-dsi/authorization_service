@@ -1,6 +1,7 @@
 package com.dsi.authorization.dao;
 
 import com.dsi.authorization.exception.CustomException;
+import com.dsi.authorization.model.Api;
 import com.dsi.authorization.model.Menu;
 import org.hibernate.Session;
 
@@ -18,4 +19,6 @@ public interface MenuDao {
     Menu getMenuByIdOrName(String menuID, String name);
     List<Menu> getAllSubMenus(String menuID);
     List<Menu> getAllMenus(String userID);
+
+    List<Api> getAllAPIByRole(String userId);
 }
