@@ -124,6 +124,7 @@ public class UserServiceImpl extends CommonService implements UserService {
 
         User user = userDao.getUserByID(userID);
         if(user != null) {
+            userDao.deleteUserContext(user.getUserId());
             userDao.deleteUserSession(user.getUserId());
             userDao.deleteUserRole(user.getUserId());
             userDao.deleteUser(user);
@@ -265,9 +266,9 @@ public class UserServiceImpl extends CommonService implements UserService {
                 UserContext existContext = userDao.getUserContextByUserId(userContextDto.getUserId());
 
                 if (userContextDto.getActivity() == 1) {
-                    logger.info("Context create state.");
+
                     if (existContext == null) {
-                        userContext.setContext(getContextObj(userContextDto.getTeamId()));
+                        userContext.setContext(getContextObjForEmployee(userContextDto));
                         userContext.setUser(user);
                         userContext.setVersion(1);
                         userDao.saveUserContext(userContext);
@@ -275,26 +276,22 @@ public class UserServiceImpl extends CommonService implements UserService {
 
                     } else {
                         logger.info("User context already exist.");
-                        existContext.setContext(getContextObjFromExist(userContextDto.getTeamId(),
-                                existContext.getContext()));
-                        userDao.updateUserContext(existContext);
-                        logger.info("User context update success.");
+                        if(userContextDto.getTeamId() != null) {
+                            existContext.setContext(getContextObjFromExist(userContextDto.getTeamId(),
+                                    existContext.getContext()));
+                            userDao.updateUserContext(existContext);
+                            logger.info("User context update success.");
+                        }
                     }
 
                 } else if (userContextDto.getActivity() == 2) {
-                    logger.info("Context update state.");
 
                     if(existContext != null){
-                        String context = getContextObjAfterRemove(existContext.getContext(), userContextDto.getTeamId());
-                        if(context == null){
-                            userDao.deleteUserContext(existContext.getUserContextId());
-                            logger.info("Delete user context.");
-
-                        } else {
-                            existContext.setContext(context);
-                            userDao.updateUserContext(existContext);
-                            logger.info("Update user context.");
-                        }
+                        String context = getContextObjAfterRemove(existContext.getContext(),
+                                userContextDto.getTeamId());
+                        existContext.setContext(context);
+                        userDao.updateUserContext(existContext);
+                        logger.info("Update user context.");
                     }
                 }
             }
@@ -312,18 +309,25 @@ public class UserServiceImpl extends CommonService implements UserService {
     @Override
     public UserContext getUserContextByUserId(String userId) {
         logger.info("Read user context by user id: " + userId);
+        UserContext userContext;
 
         Session session = getSession();
         userDao.setSession(session);
+        userRoleDao.setSession(session);
 
-        UserContext userContext = userDao.getUserContextByUserId(userId);
-        if(userContext == null){
-            close(session);
-            return null;
+        UserRole userRole = userRoleDao.getUserRoleByUserID(userId);
+        if(userRole.getRole().getName().equals(RoleName.MEMBER.getValue())
+                || userRole.getRole().getName().equals(RoleName.LEAD.getValue())){
+
+            userContext = userDao.getUserContextByUserId(userId);
+            if(userContext != null){
+                close(session);
+                return userContext;
+            }
         }
 
         close(session);
-        return userContext;
+        return null;
     }
 
     @Override
@@ -344,39 +348,43 @@ public class UserServiceImpl extends CommonService implements UserService {
         return system;
     }
 
-    private String getContextObj(String teamId) throws JSONException {
+    private String getContextObjForEmployee(UserContextDto contextDto) throws JSONException {
         JSONArray contextArray = new JSONArray();
-        contextArray.put(teamId);
-
         JSONObject contextObj = new JSONObject();
-        contextObj.put("team", contextArray);
+
+        if(contextDto.getEmployeeId() != null){
+            contextArray.put(contextDto.getEmployeeId());
+            contextObj.put("employeeId", contextArray);
+        }
 
         return contextObj.toString();
     }
 
     private String getContextObjFromExist(String teamId, String context) throws JSONException {
         JSONObject existContextObj = new JSONObject(context);
-        JSONArray existContextArray = existContextObj.getJSONArray("team");
-        existContextArray.put(teamId);
+        if(existContextObj.has("teamId")) {
+            JSONArray existContextArray = existContextObj.getJSONArray("teamId");
+            existContextArray.put(teamId);
 
-        JSONObject contextObj = new JSONObject();
-        contextObj.put("team", existContextArray);
+        } else {
+            JSONArray contextArray = new JSONArray();
+            contextArray.put(teamId);
 
-        return contextObj.toString();
+            existContextObj.put("teamId", contextArray);
+        }
+
+        return existContextObj.toString();
     }
 
     private String getContextObjAfterRemove(String context, String teamId) throws JSONException {
-        JSONObject contextObj = new JSONObject(context);
-        JSONArray contextArray = contextObj.getJSONArray("team");
-        contextArray.remove(teamId);
+        JSONObject existContextObj = new JSONObject(context);
+        JSONArray existContextArray = existContextObj.getJSONArray("teamId");
+        existContextArray.remove(teamId);
 
-        if(contextArray.length() > 0){
-            contextObj = new JSONObject();
-            contextObj.put("team", contextArray);
-
-            return contextObj.toString();
+        if(existContextArray.length() <= 0){
+            existContextObj.remove("teamId");
         }
 
-        return null;
+        return existContextObj.toString();
     }
 }

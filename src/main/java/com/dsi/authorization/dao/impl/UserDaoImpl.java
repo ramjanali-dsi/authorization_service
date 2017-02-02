@@ -153,10 +153,10 @@ public class UserDaoImpl extends CommonService implements UserDao {
     }
 
     @Override
-    public void deleteUserContext(String id) throws CustomException {
+    public void deleteUserContext(String userId) throws CustomException {
         try {
-            Query query = session.createQuery("DELETE FROM UserContext uc WHERE uc.userContextId =:id");
-            query.setParameter("id", id);
+            Query query = session.createQuery("DELETE FROM UserContext uc WHERE uc.user.userId =:userId");
+            query.setParameter("userId", userId);
 
             query.executeUpdate();
 

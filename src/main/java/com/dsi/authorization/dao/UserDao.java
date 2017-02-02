@@ -24,7 +24,7 @@ public interface UserDao {
 
     void saveUserContext(UserContext userContext) throws CustomException;
     void updateUserContext(UserContext userContext) throws CustomException;
-    void deleteUserContext(String userContextId) throws CustomException;
+    void deleteUserContext(String userId) throws CustomException;
     UserContext getUserContextByUserId(String userId);
 
     System getSystemByUserID(String userID);

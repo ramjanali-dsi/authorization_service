@@ -7,6 +7,8 @@ public class UserContextDto {
 
     private String teamId;
 
+    private String employeeId;
+
     private String userId;
 
     private int activity;
@@ -25,6 +27,14 @@ public class UserContextDto {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(String employeeId) {
+        this.employeeId = employeeId;
     }
 
     public int getActivity() {
