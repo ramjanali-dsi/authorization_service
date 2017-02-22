@@ -43,7 +43,7 @@ public class MenuResource {
         String userID = request.getAttribute("user_id") != null ?
                 request.getAttribute("user_id").toString() : null;
 
-        //return Response.ok().entity(menuService.getAllMenusAndApiPermission(userID)).build();
-        return Response.ok().entity(menuService.getAllMenus(userID)).build();
+        return Response.ok().entity(menuService.getAllMenusAndApiPermission(userID)).build();
+        //return Response.ok().entity(menuService.getAllMenus(userID)).build();
     }
 }
