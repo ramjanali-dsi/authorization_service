@@ -118,13 +118,13 @@ public class UserRoleDaoImpl extends CommonService implements UserRoleDao {
     public List<UserRole> getAllUserByRole(String roleType) {
         Query query;
         if(roleType != null) {
-            query = session.createQuery("FROM UserRole ur WHERE ur.role.name =:roleName");
+            query = session.createQuery("FROM UserRole ur WHERE ur.role.name =:roleName OR ur.role.name =:roleName1");
             query.setParameter("roleName", roleType);
+            query.setParameter("roleName1", RoleName.MANAGER.getValue());
 
         } else {
-            query = session.createQuery("FROM UserRole ur WHERE ur.role.name =:roleType1 Or ur.role.name =:roleType2");
-            query.setParameter("roleType1", RoleName.LEAD.getValue());
-            query.setParameter("roleType2", RoleName.MEMBER.getValue());
+            query = session.createQuery("FROM UserRole ur WHERE ur.role.name !=:roleType");
+            query.setParameter("roleType", RoleName.HR.getValue());
         }
 
         List<UserRole> userRoleList = query.list();
@@ -135,10 +135,9 @@ public class UserRoleDaoImpl extends CommonService implements UserRoleDao {
     }
 
     @Override
-    public List<UserRole> getAllUserByRole() {
-        Query query = session.createQuery("FROM UserRole ur WHERE ur.role.name =:roleName1 or ur.role.name =:roleName2");
-        query.setParameter("roleName1", RoleName.HR.getValue());
-        query.setParameter("roleName2", RoleName.MANAGER.getValue());
+    public List<UserRole> getAllUserByRoleType(String roleType) {
+        Query query = session.createQuery("FROM UserRole ur WHERE ur.role.name =:roleName");
+        query.setParameter("roleName", roleType);
 
         List<UserRole> userRoleList = query.list();
         if(userRoleList != null){

@@ -198,7 +198,7 @@ public class UserServiceImpl extends CommonService implements UserService {
         JSONObject roleObj = new JSONObject();
         JSONArray emailArray;
         try {
-            List<UserRole> userRoleList = userRoleDao.getAllUserByRole(RoleName.HR.getValue());
+            List<UserRole> userRoleList = userRoleDao.getAllUserByRoleType(RoleName.HR.getValue());
             if (userRoleList == null) {
                 close(session);
                 ErrorContext errorContext = new ErrorContext(null, null,
@@ -215,7 +215,7 @@ public class UserServiceImpl extends CommonService implements UserService {
             }
             roleObj.put(RoleName.HR.getValue(), emailArray);
 
-            userRoleList = userRoleDao.getAllUserByRole(RoleName.MANAGER.getValue());
+            userRoleList = userRoleDao.getAllUserByRoleType(RoleName.MANAGER.getValue());
             if (userRoleList == null) {
                 close(session);
                 ErrorContext errorContext = new ErrorContext(null, null,

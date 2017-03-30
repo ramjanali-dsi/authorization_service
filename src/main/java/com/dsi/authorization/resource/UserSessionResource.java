@@ -3,8 +3,11 @@ package com.dsi.authorization.resource;
 import com.dsi.authorization.exception.CustomException;
 import com.dsi.authorization.exception.ErrorContext;
 import com.dsi.authorization.exception.ErrorMessage;
+import com.dsi.authorization.model.UserRole;
 import com.dsi.authorization.model.UserSession;
+import com.dsi.authorization.service.UserRoleService;
 import com.dsi.authorization.service.UserSessionService;
+import com.dsi.authorization.service.impl.UserRoleServiceImpl;
 import com.dsi.authorization.service.impl.UserSessionServiceImpl;
 import com.dsi.authorization.util.Constants;
 import com.dsi.authorization.util.Utility;
@@ -33,6 +36,7 @@ public class UserSessionResource {
     private static final Logger logger = Logger.getLogger(UserSessionResource.class);
 
     private static final UserSessionService userSessionService = new UserSessionServiceImpl();
+    private static final UserRoleService userRoleService = new UserRoleServiceImpl();
 
     @POST
     @ApiOperation(value = "User Session Create", notes = "User Session Create", position = 1)
@@ -48,6 +52,11 @@ public class UserSessionResource {
 
             userSessionService.saveUserSession(userSession);
             logger.info("User session save successfully.");
+
+            UserRole userRole = userRoleService.getUserRoleByUserID(userSession.getUserId());
+            if(userRole != null){
+                responseObj.put("roleName", userRole.getRole().getName());
+            }
 
             responseObj.put(Constants.MESSAGE, "Create user session success.");
             return Response.ok().entity(responseObj.toString()).build();
